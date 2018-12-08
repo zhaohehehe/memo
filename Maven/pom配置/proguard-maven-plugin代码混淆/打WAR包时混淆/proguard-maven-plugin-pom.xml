@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>**</groupId>
+	<artifactId>webapp</artifactId>
+	<version>1.0</version>
+	<packaging>war</packaging>
+	<name>**</name>
+	<url>http://maven.apache.org</url>
+	<build>
+		<finalName>webapp</finalName>
+		<plugins>
+			<plugin>
+				<groupId>com.github.wvengen</groupId>
+				<artifactId>proguard-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<!-- 混淆时刻，这里是打包的时候混淆 -->
+						<phase>package</phase>
+						<goals>
+							<!-- 使用插件的什么功能，当然是混淆 -->
+							<goal>proguard</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- 是否混淆 -->
+					<obfuscate>true</obfuscate>
+					<proguardInclude>${basedir}/proguard.conf</proguardInclude>
+					<!-- <outjar>${project.artifactId}\WEB-INF\lib</outjar> -->
+					<!-- 添加依赖，这里你可以按你的需要修改，这里测试只需要一个JRE的Runtime包就行了 -->
+					<libs>
+						<lib>${java.home}/lib/rt.jar</lib>
+					</libs>
+					<!-- 加载文件的过滤器，就是你的工程目录了 -->
+					<!-- <inFilter></inFilter> -->
+					<!-- <injar>D:/BONC-NewMVN3/output/beaf-confusion</injar> -->
+					<!-- <injarNotExistsSkip>true</injarNotExistsSkip> -->
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.proguard</groupId>
+						<artifactId>proguard-base</artifactId>
+						<version>5.3.3</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+</project>

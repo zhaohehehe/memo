@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-jar-plugin</artifactId>
+	<version>2.4</version>
+	<configuration>
+		<!-- <classifier>vo</classifier> -->
+		<outputDirectory>D:\BONC-NewMVN3\output</outputDirectory>
+		<includes>
+			<include>**/*</include>
+		</includes>
+	</configuration>
+</plugin>

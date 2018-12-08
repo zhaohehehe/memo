@@ -1,0 +1,135 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId></groupId>
+  <artifactId></artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name></name>
+
+   <build>
+<!-- 资源文件的配置方法：三种方法可以实现。
+	资源文件是Java代码中要使用的文件。代码在执行的时候会到指定位置去查找这些文件。Maven虽然有默认的处理方式，但是有时候我们需要进行自定义的配置。
+	有时候有些配置文件通常与.java文件一起放在src/main/java目录（如mybatis或hibernate的表映射文件）。有的时候还希望把其他目录中的资源也复制到classes目录中。
+	因为maven默认只拷贝class文件，所以需要我们自己制定拷贝的其他类型的文件到target/classes，这些情况下就需要在Pom.xml文件中修改配置了 
+-->
+	  
+<!-- *******************************************************第一种方法：使用resources (和第二种方法一样，只不过是使用maven自带的maven-resources-plugin)************************************************-->
+	  
+	  <!--  <resources>
+      	<resource>
+        	<directory>${project.basedir}/src/main/java</directory>
+        	<includes>
+        		<include>**/*.xml</include>
+        		<include>**/*.properties</include>
+        		<include>**/*.java</include>
+        	</includes>
+      	</resource>
+      	<resource>
+        	<directory>${project.basedir}/src/main/resources</directory>
+        	<includes>
+        		<include>**/*.xml</include>
+        		<include>**/*.properties</include>
+        		<include>**/*.js</include>
+        	</includes>
+      	</resource>
+      	<resource>
+				<directory>${project.basedir}/src/main/lib</directory>
+				<includes>
+					<include>**/*.jar</include>
+				</includes>
+		</resource>
+      </resources>
+      <testResources>
+      	<testResource>
+      		<directory>${project.basedir}/src/main/test</directory>
+      	</testResource>
+      </testResources> -->
+<!-- *******************************************************第二种方法：使用指定的maven-resources-plugin插件 ************************************************-->     
+<!--       <plugins>
+      	<plugin>
+      		<artifactId>maven-resources-plugin</artifactId>
+      		<groupId>org.apache.maven.plugins</groupId>
+      		<version>3.0.1</version>
+      		<executions>
+      			<execution>
+      				<id>copy-resources</id>
+      				<phase>process-sources</phase>
+      				<goals>
+      					<goal>copy-resources</goal>
+      				</goals>
+      				<configuration>
+      					<outputDirectory>${basedir}/target/classes</outputDirectory>
+      					<resources>
+      						<resource>
+        						<directory>${project.basedir}/src/main/java</directory>
+        						<includes>
+        							<include>**/*.xml</include>
+        							<include>**/*.properties</include>
+        							<include>**/*.java</include>
+        						</includes>
+      					   </resource>
+      						<resource>
+        						<directory>${project.basedir}/src/main/resources</directory>
+        						<includes>
+        							<include>**/*.xml</include>
+        							<include>**/*.properties</include>
+        							<include>**/*.js</include>
+        						</includes>
+      						</resource>
+      						<resource>
+								<directory>${project.basedir}/src/main/lib</directory>
+								<includes>
+									<include>**/*.jar</include>
+								</includes>
+							</resource>
+      					</resources>
+      				</configuration>
+      			</execution>
+      		</executions>
+      	</plugin>
+      </plugins> -->
+    
+<!-- *******************************************************第三种方法：使用build-helper-maven-plugin插件 ************************************************-->
+	<plugins>
+		<plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>build-helper-maven-plugin</artifactId>
+            <version>1.8</version>
+            <executions>
+                <execution>
+                    <id>add-resource</id>
+                    <phase>generate-resources</phase>
+                    <goals>
+                        <goal>add-resource</goal>
+                    </goals>
+                    <configuration>
+                        <resources>
+      						<resource>
+        						<directory>${project.basedir}/src/main/java</directory>
+        						<includes>
+        							<include>**/*.xml</include>
+        							<include>**/*.properties</include>
+        							<include>**/*.java</include>
+        						</includes>
+      					   </resource>
+      						<resource>
+        						<directory>${project.basedir}/src/main/resources</directory>
+        						<includes>
+        							<include>**/*.xml</include>
+        							<include>**/*.properties</include>
+        							<include>**/*.js</include>
+        						</includes>
+      						</resource>
+      						<resource>
+								<directory>${project.basedir}/src/main/lib</directory>
+								<includes>
+									<include>**/*.jar</include>
+								</includes>
+							</resource>
+      					</resources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+	</plugins>
+</build>
+</project>

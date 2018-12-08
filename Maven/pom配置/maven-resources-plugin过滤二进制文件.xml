@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Maven resources 插件会对文本资源文件进行转码，但是它无法区分文件是否是纯文本文件还是二进制文件。
+	于是二进制文件在部署过程中也就被转码了，就无法正常打开了。
+	官方文档建议按如下操作 
+-->
+<build>
+	<resources>
+		<resource>
+			<directory>${project.basedir}/src/main/resources</directory>
+			<includes>
+				<include>**/*.ttf</include>
+				<include>**/*.woff</include>
+				<include>**/*.woff2</include>
+				<include>**/*.svg</include>
+				<include>**/*.pdf</include>
+			</includes>
+			<filtering>true</filtering>
+		</resource>
+	</resources>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>3.0.2</version>
+			<configuration>
+				<encoding>UTF-8</encoding>
+				<nonFilteredFileExtensions>
+					<nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+					<nonFilteredFileExtension>woff</nonFilteredFileExtension>
+					<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+					<nonFilteredFileExtension>svg</nonFilteredFileExtension>
+					<nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+				</nonFilteredFileExtensions>
+			</configuration>
+		</plugin>
+	</plugins>
+</build>

@@ -1,0 +1,74 @@
+对于proguard配置举例：
+1.
+	public class Bean1{
+		
+	}
+	public class Bean2{
+		Bean1 bean1;
+		Strign test;
+	}
+	如果设置：	
+	-keep class Bean1
+	-keep class Bean2 
+	在实际编译的Bean2的class文件如下：
+	public class Bean2{
+		Bean1 bean1;//因为Bean1设置不混淆，所以即使Bean2设置混淆成员变量，实际Bean1在class文件中仍然是未混淆的；
+		Strign a;
+	}
+2.无论是否有注解，当前混淆配置只混淆变量名，对于变量类型是否混淆没有效果，变量类型是否混淆在其类型自己的混淆配置中
+	public class com.bean.Bean3{}
+	public class com.bean.Bean4{}
+	public class Bean5{
+		@Autowired
+		private SessionFactory sessionFactory;
+		
+		@Resource
+		Bean4 bean4;
+		@Resource(name="bean3")
+		Bean3 bean3;
+		
+		Bean3 bean33;
+		Bean4 bean44;
+	}
+	如果设置：
+		<option>-keepclassmembers class * 
+			{
+				@javax.annotation.Resource *;
+			}
+		</option>
+		<option>-keepclassmembers class * 
+			{
+				@org.springframework.beans.factory.annotation.Autowired *;
+			}
+		</option>
+		-keep class Bean3
+		Bean4混淆所有
+		Bean5混淆所有
+	在实际编译的Bean5的class文件如下：
+		public class a(Bean5)
+		{
+  			@Autowired
+  			private SessionFactory sessionFactory;
+  			@Resource
+  			a(Bean4) bean4;
+  			@Resource(name="bean3")
+  			Bean3 bean3;
+  			
+  			Bean3 jdField_a_of_type_ComZhaoheStudySpringModelUser;
+  			a(Bean4) jdField_a_of_type_ComBeafBeanA;
+  			...
+  		}
+3.
+	class A implements java.io.Serializable{...}
+	class B extends A{...}
+	如果：
+		-keep class A implements java.io.Serializable
+	那么：B同样会受影响，同样会保留class名称
+	
+	
+	
+	
+	
+	
+	
+	

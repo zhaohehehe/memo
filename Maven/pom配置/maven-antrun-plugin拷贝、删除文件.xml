@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.study</groupId>
+  <artifactId>mvndemo</artifactId>
+  <packaging>jar</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>mvndemo Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+   <build>
+	  <plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<configuration>
+						 	<target>
+                				<echo message="¿½±´classÎÄ¼þµ½webapp"/>
+                				<copy
+									todir="D:\Workspace\TEMP\deployment\depWebApp\target\dp\WEB-INF\classes"
+									overwrite="true">
+									<fileset dir="${basedir}/target/classes" />
+								</copy>
+                				<delete dir="D:\Workspace\TEMP\deployment\depWebApp\target\dp\WEB-INF\classes\META-INF" />  
+								<!--
+								<delete file="${project.build.directory}/classes/*.properties" />  
+								<move file="${project.build.directory}/classes/*.properties" tofile="${project.build.directory}/classes/*.properties"/>  
+              					-->			
+              				</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+	  </plugins>
+	</build>
+</project>

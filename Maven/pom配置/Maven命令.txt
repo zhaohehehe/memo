@@ -1,0 +1,40 @@
+1.deploy jar
+	mvn deploy:deploy-file -DgroupId=com.bonc.* -DartifactId=bmm-* -Dversion=* -Dpackaging=jar 
+	-Dfile=../*.jar -Djavadoc=../*.jar -Dsources==../*.jar
+	-Durl=http://username:pwd@code.*.com.cn/nexus/content/repositories/snapshots/
+	
+	mvn deploy:deploy-file -DgroupId=* -DartifactId=* -Dversion=*
+	-Dpackaging=*
+	-Dfile=D://bug/*.jar
+	-DpomFile=D://*/pom.xml" 
+	-Dsources=* 
+	-Djavadoc=*
+    -Durl=http://username:pwd@*.bonc.com.cn/nexus/content/repositories/snapshots/
+    
+	如果url中未配置用户名和密码，可以在settings.xml文件配置server,然后增加-DrepositoryId参数即可
+	mvn deploy:deploy-file -DgroupId=com.bonc.* -DartifactId=bmm-* -Dversion=* -Dpackaging=jar 
+	-Dfile=../*.jar -Djavadoc=../*.jar -Dsources==../*.jar
+	-Durl=http://code.bonc.com.cn/nexus/content/repositories/snapshots/ -DrepositoryId=*
+	
+	如果pom中已经指定仓库
+	mvn clean deploy -f D://filepath/pom.xml -Pjdk7doc -Dmaven.test.skip=true(参数是扩展的，在pom中指定配置)
+
+2.install 
+	mvn clean install -f D://filepath/pom.xml -Pjdk7doc -Dmaven.test.skip=true(参数是扩展的，在pom中指定配置)
+
+3.versions
+	mvn versions:set -DnewVersion=*
+	mvn versions:commit
+	mvn versions:revert
+	mvn versions:display-dependency-updates
+	mvn versions:display-plugin-updates	
+	mvn clean deploy -f ../pom.xml -Dmaven.test.skip=true
+	mvn package  -Dmaven.javadoc.skip=true 
+4.mvn dependency:tree [-f ../pom.xml]
+
+
+	
+	
+	
+	
+	

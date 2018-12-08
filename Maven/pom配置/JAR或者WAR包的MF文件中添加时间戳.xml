@@ -1,0 +1,92 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.zhaohe.demo</groupId>
+	<artifactId>websocket</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>websocket Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<!--UTC时区 -->
+		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+		<maven.build.number>1.0.5</maven.build.number>
+	</properties>
+	<build>
+		<finalName>websocket_${maven.build.timestamp}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>timestamp-property</id>
+						<goals>
+							<goal>timestamp-property</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<name>udf.build.timestamp</name>
+					<!-- <pattern>yyyyMMdd-HHmmss</pattern> -->
+					<pattern>yyyy-MM-dd HH:mm:ss</pattern>
+					<timeZone>GMT+8</timeZone>
+				</configuration>
+			</plugin>
+			<!-- JAR包MF文件添加时间戳 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Build-Time>${udf.build.timestamp}</Build-Time>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<!-- WAR包MF文件添加时间戳 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+						<manifestEntries>
+							<Build-Number>${maven.build.number}</Build-Number>
+							<!-- Maven自带时间戳 -->
+							<!-- <Timestamp>${maven.build.timestamp}</Timestamp> -->
+							<!-- Maven自带时间戳 -->
+							<Timestamp>${udf.build.timestamp}</Timestamp>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<verbose>true</verbose>
+					<fork>true</fork>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- 编译，忽略测试 -->
+					<!-- <testFailureIgnore>true</testFailureIgnore> -->
+					<!--不编译，跳过单元测试 -->
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

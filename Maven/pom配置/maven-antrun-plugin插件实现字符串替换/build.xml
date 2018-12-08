@@ -1,0 +1,11 @@
+<project name="ant substring string" default="test">  
+    <taskdef resource="net/sf/antcontrib/antlib.xml"/>  
+    <propertyregex property="db.version"  
+                  input="124.6"  
+                  regexp="(.*)\."  
+                  select="\1"  
+                  casesensitive="false" />  
+    <target name="test">  
+        <echo>db.version is ${db.version}</echo>  
+    </target>  
+</project>  

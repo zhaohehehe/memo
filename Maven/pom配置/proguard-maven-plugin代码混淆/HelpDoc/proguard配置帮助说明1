@@ -1,0 +1,67 @@
+对于proguard配置来说，特定配置会覆盖全局配置（类似于局部变量会覆盖全局变量）
+
+关键字：
+	class = 表示任何接口类、抽象类和普通类;
+	interface = 表示只能是接口类;
+	!interface = 表示不是接口类;
+	enum = 表示只能是枚举类;
+	!enum = 表示不是枚举类;
+	!class = 错误示例，不能这样写;
+	class * implements|extends|implements = 表示限定类一定要扩展自一个指定类或者实现了一个指定接口类;
+	
+类名：
+	（1）全名称	;
+	（2）包含以下一些特殊字符的正则表达式:
+		1） ? : 代表一个任意字符，但不能是“ . ”，因为是包名分隔符）;
+		2） * : 单个星号代表任意个任意字符，但不能代表“ . ”;
+		3） **: 两个星号代表任意个任意字符，且能代表“ . ”;
+		注意：对于单个*来说，如果类名部分只有一个*，不包含其他任意字符，为了保证兼容性，其代表任何类，此时等价于**；
+成员变量：
+	对于类中的成员变量（Fields）来说:
+		1.可以通过变量类型 fieldtype 和变量名 fieldname 来精确指定;
+		2.也可以通过 <fields> 表示类中的任何成员变量;
+		注意：成员函数名 methodname 和成员变量名 fieldname 来说也可以使用通配符来匹配;
+成员函数：
+	对于类中的成员函数（Methods）来说:
+		1.可以通过返回类型 returntype 、方法名 methodname 和参数类型 argumenttype 来唯一限定;
+		2.也可以通过 <methods> 来表示类中的任何成员函数;
+构造函数：
+	对于类的构造函数来说，可以用 <init> 加上构造函数的参数来指定。
+注意：星号（“ * ”）可以匹配类中的任何成员变量和函数，例如：-keep public class * { public protected *; }
+
+通配符使用：
+	1.对于fieldname、methodname:
+		1） ? : 代表一个任意字符，但不能是“ . ”，因为是包名分隔符;
+		2） * : 单个星号代表任意个任意字符，但不能代表“ . ”;
+	2.对于fieldtype、returntype、argumenttype、构造函数的参数类型:
+		1） % ：匹配任何原始类型，如 boolean 、 int 等，但不包括 void ；
+		2） ？ ：匹配一个任意字符，不包括句号；
+		3） * ：匹配任意个任意字符，不包括句号；
+		4） ** ：匹配任意个任意字符，包括句号；
+		5） *** ：匹配任意类型，包括原始类型和非原始类型，数组类型和非数组类型；
+		6） … ：匹配任何数目个任何类型的参数。
+访问限定符：
+	1.在类名前、类中成员变量和成员函数名前，可以加上访问限定符（如 public 、 private 、 protected 等，修饰类、成员变量和成员函数的访问限定符各不相同）。
+	2.如果加上了访问限定符后，就表示要匹配的类、成员变量或成员函数的定义中必须包含这些限定符。
+	3.如果在限定符前面加上“ ! ”，则刚好相反，定义中必须不包含这些限定符。
+	
+Proguard配置
+（参见：https://stuff.mit.edu/afs/sipb/project/android/sdk/android-sdk-linux/tools/proguard/docs/index.html#manual/usage.html）
+（博客：http://blog.csdn.net/wyzzgo/article/details/54143696）
+	1.keep:
+		-keep [,modifier,…] class_specification 保留指定的类名以及成员
+		-keepclassmembers [,modifier,…] class_specification 只能保留住成员而不能保留住类名
+		-keepclasseswithmembers [,modifier,…] class_specification 可以根据成员找到满足条件的所有类而不用指定类名(这样的类必定拥有所列出的所有成员),可以保留类名和成员名
+	2.modifier三个可选值:
+		allowshrinking允许其被压缩,就是说指定的内容有可能被移除,但是如果没有被移除的话它也不会在后续过程中被优化或者混淆
+		allowoptimization允许其被优化,但是不会被移除或者混淆(使用情况较少)
+		allowobfuscation允许其被混淆,但是不会被移除或者优化(使用情况较少)
+	3.class_specification是类和成员的一种模板,只有符合此模板的类和成员才会被应用keep规则
+	4*.最重要的是classname必须用全名,例如java.lang.String.并且可以使用一些特定的通配符
+注意：
+	1.-keep class com.**{<init>(***);<fields>;}等价于-keep class com.**{<fields>;}
+		因为其保留class名字的同时会保留构造函数名字；
+	2.-keepclassmembers class com.**{<init>(***);<fields>;}才有必要加入<init>(***);
+	
+
+
