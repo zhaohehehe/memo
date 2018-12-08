@@ -1,0 +1,12 @@
+1.从SVN下载项目到本地：
+	svn checkout https://svn.*.com.cn/TRUNK/test D://filepath --username 123 --password 123
+2.SVN上传
+	svn commit -m '上传功能' --username 123 --password 123 --depth infinity 
+3.创建分支目录
+	svn mkdir -m '创建分支目录' https://svn.*.com.cn/Tags/test --username 123 --password 123
+4.删除分支
+	svn rm -m '创建分支前，先删除已经存在分支' https://svn.*.com.cn/Tags/test/branch_test --username 123 --password 123
+5.创建发版分支
+	svn cp -m '创建发版分支' D://filepath/test https://svn.*.com.cn/Tags/test/branch_test branchName --username 123 --password 123
+                         
+	
