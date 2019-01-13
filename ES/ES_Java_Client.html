@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+
+pre {
+	margin: 0 0 10px;
+	padding: 8px 16px 4px 56px;
+	background-color: #f6f8fa;
+}
+
+pre.command {
+	margin: 0 0 10px;
+	padding: 8px 16px 4px 56px;
+	color: blue;
+	font-weight: bold;
+}
+
+strong {
+	color: green;
+}
+
+dt {
+	font-size: 20px;
+}
+
+p {
+	margin: 0 0 10px;
+	padding: 8px 16px 4px 56px;
+	background-color: #f6f8fa;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div>
+		    <h2>参考ES：<a href='https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-api.html'>官方文档</a></h2>
+			<h3>Java API : 所有的ES操作都需要一个Client去执行。所有的操作都是异步（asynchronous ）的（either accepts a listener, or returns a future）</h3>
+			<h3>由于TransportClient在7.0中已经deprecating，在8.0中即将删除，所以，使用Java REST Client。该客户端使用HTTP requests，而不是serialized Java requests。升级操作参见<a href='https://www.elastic.co/guide/en/elasticsearch/client/java-rest/6.4/java-rest-high-level-migration.html'>迁移文档</a>。</h3>
+			<h3>Client使用方式：<br>
+			（1）在一个已经存在的ES集群上使用标准的index、get、delete、search操作。<br>
+			（2）在一个已经运行的集群上执行administrative tasks。
+			</h3>
+			<h3>获取Client方式：</h3><br>
+			（1）<a href='https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/transport-client.html'>Transport Client</a>:本身不加入集群，而是获取一个或多个初始化连接地址并且以轮训的方式进行交互（所以，会出现"two hop" operations）<br>
+			<strong>the client should have the same version as the cluster,否则新功能可能不支持</strong>
+			<pre>
+		// on startup
+		//(1) EMPTY Settings
+		TransportClient client = new PreBuiltTransportClient(Settings.EMPTY)
+		        .addTransportAddress(new TransportAddress(InetAddress.getByName("host1"), 9300))
+		        .addTransportAddress(new TransportAddress(InetAddress.getByName("host2"), 9300));
+		//(2)
+		Settings settings = Settings.builder()
+		        .put("cluster.name", "myClusterName").build();
+		TransportClient client = new PreBuiltTransportClient(settings);
+		//Add transport addresses and do something with the client...
+		
+		//(3)
+		Settings settings = Settings.builder()
+		        .put("client.transport.sniff", true).build();
+		TransportClient client = new PreBuiltTransportClient(settings);
+		//Add transport addresses and do something with the client...
+		
+		// on shutdown
+		client.close();
+		依赖：
+		&lt;dependency>
+			&lt;groupId>org.elasticsearch.client&lt;/groupId>
+			&lt;artifactId>transport&lt;/artifactId>
+			&lt;version>6.4.0&lt;/version>
+		&lt;/dependency>
+		</pre>
+			（2）Java REST Client。
+		</div>
+		<hr>
+		<div>
+			<h2>Java REST Client分为以下2种方式：</h2>
+			<ol>
+				<li><a href='https://www.elastic.co/guide/en/elasticsearch/client/java-rest/6.4/java-rest-high.html'>Java High level REST client</a>:使用HTTP协议和ES交互,支持大部分common APIs ,基于Low Level REST Client，不支持的可以通过Java Low Level REST Client实现。<a href='https://github.com/elastic/elasticsearch/issues/27205'>详细API参考</a>
+				<br>the official high-level client for Elasticsearch. Based on the low-level client, it exposes API specific methods and takes care of requests marshalling and responses un-marshalling.</li>
+				<li><a href='https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-low.html'>Java Low Level REST Client</a>:使用HTTP协议和ES交互。
+				<br>the official low-level client for Elasticsearch. It allows to communicate with an Elasticsearch cluster through http. Leaves requests marshalling and responses un-marshalling to users. It is compatible with all Elasticsearch versions.
+				<br><a href='https://www.cnblogs.com/ginb/p/8682092.html'>低级客户端参考blog</a>
+				</li>
+			</ol>
+			<hr>
+		</div>
+	</div>
+</body>
+</html>

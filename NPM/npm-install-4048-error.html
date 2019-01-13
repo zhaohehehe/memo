@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre {
+    margin: 0 0 10px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+}
+pre.command {
+    margin: 0 0 10px;
+    padding: 8px 16px 4px 56px;
+   color: blue;
+   font-weight:bold;
+}
+strong{
+ 	color:green;
+}
+dt{
+ font-size:20px;
+}
+p{
+	margin: 0 0 10px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<h2>npm ERR! Error: EPERM: operation not permitted unlink</h2>
+		<h2>试了网上的各种方法没有解决，最后是因为网络问题，依赖没有下载完全。最后放弃NPM（NPM不会多次尝试下载），使用YARN:执行命令安装npm install yarn -g</h2>
+		<h2>安装过程中出现4048问题，是应为没有使用管理员权限，导致安装文件一直留存于node_modules\.staging下，使用管理员权限安装即可</h2>
+	</div>
+</body>
+</html>

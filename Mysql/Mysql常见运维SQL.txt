@@ -1,0 +1,21 @@
+-- 表占用空间大小以及记录数
+SELECT TABLE_NAME,DATA_LENGTH+INDEX_LENGTH,TABLE_ROWS FROM information_schema.TABLES WHERE TABLE_SCHEMA='bdam_test';
+
+-- 查询是否锁表 
+1、查询是否锁表(查看那些表被锁) 
+	show OPEN TABLES where In_use > 0;
+2、查询进程
+	show processlist   查询到相对应的进程===然后 kill    id
+补充：
+查看正在锁的事务
+	SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCKS; 
+查看等待锁的事务
+	SELECT * FROM INFORMATION_SCHEMA.INNODB_LOCK_WAITS;
+	
+-- 慢SQL查询	
+	-- 查看慢查询时间
+	show variables like "long_query_time";默认10s
+	-- 查看慢查询配置情况
+	show status like "%slow_queries%";
+	-- 查看慢查询日志路径
+	show variables like "%slow%";

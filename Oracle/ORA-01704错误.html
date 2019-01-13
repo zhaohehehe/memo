@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+.container {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+div {
+	display: block;
+}
+pre {
+    margin: 0 0 24px;
+    padding: 8px 16px 4px 56px;
+    background-color: #f6f8fa;
+    border: none;
+}
+dt{
+ font-size:20px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+	<h3>ORA-01704:string literal too long</h3>
+	<div>问题描述：table中某个字段的类型是CLOB,但是后台插入的是字符串。</div>
+	<div>问题原因：oracle sql的varchar2的最大长度为4000，而当后台直接insert into tableName values (string_value)时，会将string_value转换为varchar2，而不是clob类型，所以会报错。</div>
+	<div>解决办法有三种：</div>
+		<ol>
+			<li>第一种方法是将insert或者update语句改成存储过程执行，首先要定义一个clob类型的变量：<br>
+			例如：
+<pre>create or  replace procedure p_ora_01704(content in clob) IS
+	d_content clob;
+	begin
+		d_content := content;
+		insert into tableName(...) values (d_content);
+		--execute 动态拼接sql immediate;
+		commit;
+	end;;
+	然后调用存储过程即可。
+	
+	或者：后台直接执行以下sql:
+	declare conent clob :='*';
+	begin	
+		insert into tableName(...)  values (content);
+		commit;
+	end;	
+</pre>							
+			</li>
+			<li>第二种方法是多次更新：对于更新结果s分成s1,s2,s3,然后更新时update set s=s||s1类推。</li>
+			<li>第三种方法：使用PreparedStatement,使用？占位符：
+<pre>PreparedStatement pst=conn.prepareStatement(insert into tableName values(?)或者update tableName set column=?);
+	pst.setString(1,string_value);
+	pst.executeUpdate();
+</pre>
+			</li>
+		</ol>
+	</div>
+</body>
+</html>
