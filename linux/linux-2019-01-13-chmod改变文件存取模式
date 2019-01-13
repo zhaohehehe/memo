@@ -1,0 +1,37 @@
+[zhaohe@localhost ~]$ cd /usr/local
+[zhaohe@localhost local]$ ll
+总用量 48
+drwxr-xr-x. 2 root root 4096 7月  13 2018 bin
+drwxrwxr-x. 8 root root 4096 12月 14 20:39 eclipse
+drwxr-xr-x. 2 root root 4096 7月  13 2018 etc
+drwxr-xr-x. 2 root root 4096 7月  13 2018 games
+drwxr-xr-x. 2 root root 4096 7月  13 2018 include
+drwxr-xr-x. 2 root root 4096 7月  13 2018 lib
+drwxr-xr-x. 2 root root 4096 7月  13 2018 lib64
+drwxr-xr-x. 2 root root 4096 7月  13 2018 libexec
+drwxr-xr-x. 2 root root 4096 7月  13 2018 sbin
+drwxr-xr-x. 5 root root 4096 10月 25 07:58 share
+drwxr-xr-x. 2 root root 4096 12月 16 16:25 src
+drwxr-xr-x. 3 root root 4096 1月  13 19:32 tomcat
+#d代表directory，之后每三位进行分隔。例如：drwxr-xr-x（d111101101=755）。wxr:可写可执行可读。
+#root root 代表用户权限和用户组
+[zhaohe@localhost local]$ cd tomcat
+[zhaohe@localhost tomcat]$ ll
+总用量 4
+drwxr-xr-x. 10 zhaohe zhaohe 4096 1月  13 19:52 apache-tomcat-8.5.37
+#如果原来是root:root可以改为zhaohe:zhaohe 
+#[zhaohe@localhost ~]$ chown zhaohe:zhaohe apache-tomcat-8.5.37
+#代表用户zhaohe以及zhaohe用户组
+#修改当前路径下的权限
+#[zhaohe@localhost apache-tomcat-8.5.37]$ chmod -R 755 .
+
+
+
+
+
+
+
+
+
+
+

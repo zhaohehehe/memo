@@ -1,0 +1,11 @@
+1.
+[zhaohe@localhost ~]$ vi ~/.bashrc 
+文件末尾添加：alias eclipse='/usr/local/eclipse/eclipse'（value为eclipse的可执行文件路径），然后:wq!保存。
+2.
+[zhaohe@localhost ~]$ source ~/.bashrc 使之生效
+3.键入eclipse即打开eclipse软件
+
+
+
+
+
