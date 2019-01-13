@@ -1,0 +1,18 @@
+执行 mount命令发现硬盘的权限为ro,执行删除或者创建命令时会提示Read Only System。因为硬盘挂载是只读的，需要重新mount成rw的，执行命令如下：mount -o rw,remount /run/media/user/ce4d*****，
+但是依然失败，不能读写，mount失败。
+1.[zhaohe@localhost ~]$ man mount.
+键入tab，查看所有mount命令，找到
+2.[zhaohe@localhost ~]$ man mount.ntfs-3g
+键入/remove_hiberfile搜索该option如下：
+
+  remove_hiberfile
+              When the NTFS volume is hibernated, a read-write mount is denied
+              and a read-only mount is forced. One needs either to resume Win‐
+              dows  and  shutdown  it  properly, or use this option which will
+              remove the Windows hibernation file.  Please  note,  this  means
+              that the saved Windows session will be completely lost. Use this
+              option under your own responsibility.
+
+
+
+

@@ -1,0 +1,61 @@
+系统：fedora29
+1.列出所有已经被安装的，名字中包含jdk字符串的RPM包
+	rpm -qa | grep jdk
+2.卸载rpm软件包
+	rpm -e jdk*
+3.安装应用 [sudo] dnf install 安装软件包名 
+	dnf install tomcat, dnf install eclipse, dnf install git
+显示您系统中所有启用的仓库
+	dnf repolist
+4.安装tomcat
+	sudo dnf install tomcat
+	sudo dnf install tomcat-webapps
+	service tomcat restart
+	访问http://127.0.0.1:8080即可，tomcat路径
+	(安装位置：cd /usr/share/tomcat)
+5.which tomcat 查看软件安装位置
+6.当前路径下模糊查找文件名
+	find . -name "*tomcat*"
+7.授予所有用户安装包的执行权限
+	sudo chmod +x *.rpm
+执行安装 
+	rpm -ivh *.rpm
+8.拷贝文件jdk-8u191-linux-x64.rpm到/usr/local/src/
+	sudo cp jdk-8u191-linux-x64.rpm /usr/local/src/
+9.修改文件名，由jdk1.rpm改为jdk.rpm
+	mv jdk1.rpm jdk.rpm 
+10.删除文件
+	rm jdk-8u191-linux-x64.rpm
+11.创建文件夹
+	mkdir folderName
+12.查看ip
+	ip a
+13.查看网络服务
+	systemctl status NetworkManager
+重启网络服务
+	systemctl restart NetworkManager
+14.tab 键补全
+15.安装mysql
+	https://www.if-not-true-then-false.com/2013/install-mariadb-on-fedora-centos-rhel/
+
+
+
+
+快捷键：
+	shift + ctrl +T:重新打开一个终端
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
