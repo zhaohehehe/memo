@@ -1,0 +1,13 @@
+node_modules/
+dist
+config
+**/*.css
+**/*.html
+**/*.svg
+**/*.png
+**/*.jpg
+**/*.gif
+**/*.webp
+**/*.json
+**/*.iml
+**/*.mp3

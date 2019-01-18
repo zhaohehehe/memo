@@ -1,0 +1,10 @@
+{
+    "apps": [{
+        "name": "seed",
+        "script": "./dist/server/server.js",
+        "watch": true,
+        "env": {
+            "NODE_ENV": "production"
+        }
+    }]
+}
