@@ -1,0 +1,193 @@
+pom.xml详解目录：
+----The Basics
+----POM Relationships
+---------Dependencies（transitive可传递的）
+				<dependencies>
+					<dependencie>
+						<groupId/>
+						<artifactId/>
+						<version/>:使用了继承的子模块中可以不声明groupId和version
+						<classifier/>
+								(1)支持不同的jre,jre15/jre14;
+							    (2)打包sources 或者 javadoc ；
+						<type/>:jar、ejb-jar、New types can be defined by plugins that set extensions to true等等
+						<scope/>
+						<systemPath/>:在scope=system时使用，必须是绝对路径，所以一般在properties中明确标注
+						<optional/>:可选的依赖；
+					</dependencie>
+				</dependencies>
+		DEMO1：maven-embedder依赖maven-core，消除特定传递依赖
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.maven</groupId>
+					<artifactId>maven-embedder</artifactId>
+					<version>2.0</version>
+					<exclusions>
+						<exclusion>
+							<groupId>org.apache.maven</groupId>
+							<artifactId>maven-core</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
+		DEMO2：切断所有传递依赖	
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.maven</groupId>
+					<artifactId>maven-embedder</artifactId>
+					<version>3.1.0</version>
+					<exclusions>
+						<exclusion>
+							<groupId>*</groupId>
+							<artifactId>*</artifactId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>				
+---------Inheritance
+-----------------The Super POM
+-----------------Dependency Management： mvn dependency:tree 查看依赖树
+					dependencyManagement的特性：在dependencyManagement中配置的元素既不会给parent引入依赖，也不会给它的子模块引入依赖，仅仅是它的配置是可继承的;
+					注意：子模块继承父模块配置的时候，仍然要声明groupId和artifactId（但是不用生命version）,表示当前配置是继承于父POM的，从而直接使用父POM的版本对应的资源;
+			父模块：<properties>  
+						<target.version>2.5.6</target.version>  
+					</properties>  
+					<dependencyManagement>  
+						<dependencies>  
+							<dependency>  
+								<groupId>your groupId</groupId>  
+								<artifactId>your artifactId</artifactId>  
+								<version>${target.version}</version>  
+							</dependency>  
+						</dependencies>  
+					</dependencyManagement>  
+			子模块：<dependency>  
+						<groupId>your groupId</groupId>  
+						<artifactId>your artifactId</artifactId>  
+					</dependency>  
+			<pluginManagement>这个元素和<dependencyManagement>相类似，它是用来进行插件管理的；http://blog.csdn.net/wanghantong/article/details/36427411
+			
+			在一些最佳实践中我们会发现：一个POM既是聚合POM，又是父POM，这么做主要是为了方便。
+--------Aggregation (or Multi-Module)
+--------Build
+----------------project build
+----------------profile build
+<project>
+  <!-- "Project Build" contains many BaseBuild set -->
+  <build>
+		<defaultGoal>install</defaultGoal>
+		<directory>${basedir}/target</directory>
+		<finalName>${artifactId}-${version}</finalName>
+		<filters>
+			<filter>filters/filter1.properties</filter>
+		</filters>
+		---------------------------
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<scriptSourceDirectory>${basedir}/src/main/scripts</scriptSourceDirectory>
+		<testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+		<outputDirectory>${basedir}/target/classes</outputDirectory>
+		<testOutputDirectory>${basedir}/target/test-classes</testOutputDirectory>
+		----------------------------------------------------------------------------
+		<resources>
+			<resource>
+				<targetPath>META-INF/plexus</targetPath>
+				<filtering>false</filtering>
+				<directory>${basedir}/src/main/plexus</directory>
+				<includes>
+					<include>configuration.xml</include>
+				</includes>
+				<excludes>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<testResources>...</testResources>
+		-----------------------------------------------------------------------------
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<extensions>false</extensions>
+				<inherited>true</inherited>
+				<configuration>
+					<classifier>test</classifier>
+				</configuration>
+				<dependencies>...</dependencies>
+				<executions>...</executions>
+			</plugin>
+			<configuration>
+				<items combine.children="append">
+				<!-- combine.children="merge" is the default -->
+					<item>child-1</item>
+				</items>
+				<properties combine.self="override">
+					<!-- combine.self="merge" is the default -->
+					<childKey>child</childKey>
+				</properties>
+			</configuration>
+		</plugins>
+		---------------------------------------------------------------------------
+		<extensions>#总之，扩展是在生成过程中激活的构件
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>1.0-alpha-3</version>
+			</extension>
+		</extensions>
+  </build>
+  <profiles>
+    <profile>
+      <!-- "Profile Build" contains many Project Build-->
+      <build>...</build>
+    </profile>
+  </profiles>
+</project>	
+
+--------profiles
+<profiles>
+    <profile>
+      <id>test</id>
+      <activation>...</activation>
+      <build>...</build>
+      <modules>...</modules>
+      <repositories>...</repositories>
+      <pluginRepositories>...</pluginRepositories>
+      <dependencies>...</dependencies>
+      <reporting>...</reporting>
+      <dependencyManagement>...</dependencyManagement>
+      <distributionManagement>...</distributionManagement>
+    </profile>
+  </profiles>	
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					

@@ -1,0 +1,59 @@
+setting.xml文件中配置：
+本地仓库local
+setting.xml文件中配置远程仓库（如果本地仓库没有，查询远程中央仓库）：
+ID为central的远程中央仓库central
+其他的远程中央仓库pom.xml文件中（特定的远程仓库，不稳定，不建议从这种仓库中下载相应的依赖）
+pom.xml文件中也可以配置远程仓库，但是对于内部不同项目需要多次配置，而在setting.xml文件中只需要配置一次即可，但是不是简单的将POM中的
+<repositories>及<pluginRepositories>元素复制到settings.xml中就可以，setting.xml不直接支持 这两个元素。
+我们还是有一个并不复杂的解决方案，就是利用profile，如下：
+Xml代码 
+01.<settings>  
+02.  ...   
+03.  <profiles>  
+04.    <profile>  
+05.      <id>dev</id>  
+06.      <!-- repositories and pluginRepositories here-->  
+07.    </profile>  
+08.  </profiles>  
+09.  <activeProfiles>  
+10.    <activeProfile>dev</activeProfile>  
+11.  </activeProfiles>  
+12.  ...   
+13.</settings>  
+这里我们定义一个id为dev的profile，将所有repositories以及pluginRepositories元素放到这个profile中，然后，使用<activeProfiles>元素自动激活该profile。这样，你就不用再为每个POM重复配置仓库。
+使用profile为settings.xml添加仓库提供了一种用户全局范围的仓库配置。
+
+
+镜像
+如果你的地理位置附近有一个速度更快的central镜像，或者你想覆盖central仓库配置，或者你想为所有POM使用唯一的一个远程仓库（这个远程仓库代理的所有必要的其它仓库），你可以使用settings.xml中的mirror配置。
+
+以下的mirror配置用maven.net.cn覆盖了Maven自带的central：
+
+Xml代码 01.<settings>  
+02....   
+03.  <mirrors>  
+04.    <mirror>  
+05.      <id>maven-net-cn</id>  
+06.      <name>Maven China Mirror</name>  
+07.      <url>http://maven.net.cn/content/groups/public/</url>  
+08.      <mirrorOf>central</mirrorOf>  
+09.    </mirror>  
+10.  </mirrors>  
+11....   
+12.</settings>  
+<settings>
+...
+  <mirrors>
+    <mirror>
+      <id>maven-net-cn</id>
+      <name>Maven China Mirror</name>
+      <url>http://maven.net.cn/content/groups/public/</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+...
+</settings> 
+
+这里唯一需要解释的是<mirrorOf>，这里我们配置central的镜像，我们也可以配置一个所有仓库的镜像，以保证该镜像是Maven唯一使用的仓库
+
+

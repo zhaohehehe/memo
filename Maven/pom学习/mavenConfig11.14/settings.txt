@@ -1,0 +1,234 @@
+settings.xml详解目录：
+----概述
+----声明规范
+----localRepository
+----interactiveMode
+----usePluginRegistry
+----offline
+----pluginGroups
+----proxies
+----servers
+----mirrors
+----profiles
+--------Activation
+--------Properties
+--------Repositories
+--------activeProfiles
+
+1.There are two locations where a settings.xml file may live:
+	The Maven install: ${maven.home}/conf/settings.xml
+	A user’s install: ${user.home}/.m2/settings.xml
+	如果两个都有，则二者内容合并，后者主导；
+2.声明规范：
+	<?xml version="1.0" encoding="UTF-8"?><settings xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+3.localRepository
+		<localRepository>本地仓库路径</localRepository>
+		
+4.interactiveMode		
+		#interactiveMode：交互模式，是否需要和用户交互以获得输入；默认为true。如果cmd命令是一次性把该输入的都输入进去了，免去了交互所以是false。
+		#如果选择交互的话，就是有一步一步的选项指引你去选择和填写相关的标识之类的。
+		<interactiveMode>true</interactiveMode>
+		
+5.usePluginRegistry		
+		#if Maven should use the ${user.home}/.m2/plugin-registry.xml file to 来管理插件版本, defaults to false. 
+		<usePluginRegistry>true</usePluginRegistry>
+
+6.offline		
+		<!--表示Maven是否需要在离线模式下运行。如果构建系统需要在离线模式下运行，则为true，默认为false。当由于网络设置原因或者安全因素，构建服务器不能连接远程仓库的时候，该配置就十分有用。 -->
+		<offline>false</offline>
+
+7.pluginGroups		
+		<!--当插件的组织Id（groupId）没有显式提供时，供搜寻插件组织Id（groupId）的列表。该元素包含一个pluginGroup元素列表，每个子元素包含了一个组织Id
+		（groupId）。当我们使用某个插件，并且没有在命令行为其提供组织Id（groupId）的时候，Maven就会使用该列表。
+		默认情况下该列表包含了org.apache.maven.plugins和org.codehaus.mojo -->
+		<pluginGroups>
+			<!--plugin的组织Id（groupId） -->
+			<pluginGroup>org.mortbay.jetty</pluginGroup>
+		</pluginGroups>
+		
+		For example, given the above settings the Maven command line may execute org.mortbay.jetty:jetty-maven-plugin:run with the truncated command: mvn jetty:run;
+
+8.servers		
+		#由pom.xml文件中定义的repositories 和 distributionManagement 元素决定，配置服务端的一些设置。一些设置如username、password、安全证书不应该和pom.xml一起分发。
+		#这种类型的信息应该存在于构建服务器上的settings.xml文件中。
+		#需要注意的是，settings.xml中server元素下id的值必须与POM中repository或snapshotRepository下id的值完全一致。
+		#将认证信息放到settings下而非POM中，是因为POM往往是它人可见的，而settings.xml是本地的。
+		
+		分发构件至远程仓库：需要配置POM的distributionManagement来指定Maven分发构件的最终远程位置;
+		#mvn install 会将项目生成的构件安装到本地Maven仓库，mvn deploy 用来将项目生成的构件分发到远程Maven仓库
+		<servers>(settings.xml文件中)
+			<server>
+				<!--这是server的id（注意不是用户登陆的id），该id与pom.xml文件中定义的distributionManagement的repository元素的id相匹配。the id element of the repository/mirror that Maven tries to connect to.-->
+				<id>server001</id>
+				<!--鉴权用户名。鉴权用户名和鉴权密码表示服务器认证所需要的登录名和密码。 -->
+				<username>my_login</username>
+				<!--鉴权密码 。鉴权用户名和鉴权密码表示服务器认证所需要的登录名和密码。密码加密功能已被添加到2.1.0 +。详情请访问密码加密页面-->
+				<password>my_password</password>
+				<!--鉴权时使用的私钥位置。和前两个元素类似，私钥位置和私钥密码指定了一个私钥的路径（默认是${user.home}/.ssh/id_dsa）以及如果需要的话，一个密语。将来passphrase和password元素可能会被提取到外部，但目前它们必须在settings.xml文件以纯文本的形式声明。 -->
+				<privateKey>${usr.home}/.ssh/id_dsa</privateKey>
+				<!--鉴权时使用的私钥密码。-->
+				<passphrase>some_passphrase</passphrase>
+				<!--文件被创建时的权限。如果在部署的时候会创建一个仓库文件或者目录，这时候就可以使用权限（permission）。这两个元素合法的值是一个三位数字，其对应了unix文件系统的权限，如664，或者775。 -->
+				<filePermissions>664</filePermissions>
+				<!--目录被创建时的权限。 -->
+				<directoryPermissions>775</directoryPermissions>
+				<configuration></configuration>
+			</server
+		</servers>
+		 If you use a private key to login to the server, make sure you omit(省略) the <password> element.Otherwise, the key will be ignored.
+		 
+		<distributionManagement>(pom.xml文件中)
+			<downloadUrl>http://mojo.codehaus.org/my-project</downloadUrl>
+			#status:none、converted、partner、verfied、deployed（common）;
+			<status>deployed</status>
+		</distributionManagement>
+		
+9.mirrors			 
+		 <!--为仓库列表配置的下载镜像列表。高级设置请参阅镜像设置页面 -->
+		<mirrors>
+			<!--给定仓库的下载镜像。 -->
+			<mirror>
+				<!--该镜像的唯一标识符。id用来区分不同的mirror元素。 -->
+				<id>planetmirror.com</id>
+				<!--镜像名称 -->
+				<name>PlanetMirror Australia</name>
+				<!--该镜像的URL。构建系统会优先考虑使用该URL，而非使用默认的服务器URL。 -->
+				<url>http://downloads.planetmirror.com/pub/maven2</url>
+				<!--被镜像的服务器的id。例如，如果我们要设置了一个Maven中央仓库（http://repo.maven.apache.org/maven2/）的镜像，就需要将该元素设置成central。这必须和中央仓库的id central完全一致。-->
+				<mirrorOf>central</mirrorOf>
+			</mirror>
+		</mirrors>
+		
+10.proxies		
+		<!--可能由于防火墙或者处于安全考虑，设置代理；用来配置不同的代理，多代理profiles 可以应对笔记本或移动设备的工作环境：通过简单的设置profile id就可以很容易的更换整个代理配置。 -->
+		<proxies>
+			<!--代理元素包含配置代理时需要的信息-->
+			<proxy>
+				<!--代理的唯一定义符，用来区分不同的代理元素。-->
+				<id>myproxy</id>
+				<!--该代理是否是激活的那个。true则激活代理。当我们声明了一组代理，而某个时候只需要激活一个代理的时候，该元素就可以派上用处。 -->
+				<active>true</active>
+				<!--代理的协议。 协议://主机名:端口，分隔成离散的元素以方便配置。-->
+				<protocol>http</protocol>
+				<!--代理的主机名。协议://主机名:端口，分隔成离散的元素以方便配置。  -->
+				<host>proxy.somewhere.com</host>
+				<!--代理的端口。协议://主机名:端口，分隔成离散的元素以方便配置。 -->
+				<port>8080</port>
+				<!--代理的用户名，用户名和密码表示代理服务器认证的登录名和密码。 -->
+				<username>proxyuser</username>
+				<!--代理的密码，用户名和密码表示代理服务器认证的登录名和密码。 -->
+				<password>somepassword</password>
+				<!--不该被代理的主机名列表。该列表的分隔符由代理服务器指定；例子中使用了竖线分隔符，使用逗号分隔也很常见。-->
+				<nonProxyHosts>*.google.com|ibiblio.org</nonProxyHosts>
+			</proxy>
+		</proxies>
+
+11.profiles		
+		<!--根据环境参数来调整构建配置的列表。settings.xml中的profile元素是pom.xml中profile元素的裁剪版本。
+		它包含了id，activation, repositories, pluginRepositories和 properties元素。这里的profile元素只包含这五个子元素是因为这里只关心构建系统这个整体
+		（这正是settings.xml文件的角色定位），而非单独的项目对象模型设置。
+		如果一个settings中的profile被激活，它的值会覆盖任何其它定义在POM中或者profile.xml中的带有相同id的profile。 -->
+		<profiles>
+			<!--根据环境参数来调整的构件的配置-->
+			<profile>
+				<!--该配置的唯一标识符。 -->
+				<id>test</id>
+				<!--自动触发profile的条件逻辑。Activation是profile的开启钥匙。如POM中的profile一样，profile的力量来自于它能够在某些特定的环境中自动使用某些特定的值；这些环境通过activation元素指定。activation元素并不是激活profile的唯一方式。settings.xml文件中的activeProfile元素可以包含profile的id。profile也可以通过在命令行，使用-P标记和逗号分隔的列表来显式的激活（如，-P test）。-->
+				<activation>
+					<!--profile默认是否激活的标识-->
+					<activeByDefault>false</activeByDefault>
+					<!--当匹配的jdk被检测到，profile被激活。例如，1.4激活JDK1.4，1.4.0_2，而!1.4激活所有版本不是以1.4开头的JDK。-->
+					<jdk>1.5</jdk>
+					<!--当匹配的操作系统属性被检测到，profile被激活。os元素可以定义一些操作系统相关的属性。-->
+					<os>
+						<!--激活profile的操作系统的名字 -->
+						<name>Windows XP</name>
+						<!--激活profile的操作系统所属家族(如 'windows')  -->
+						<family>Windows</family>
+						<!--激活profile的操作系统体系结构  -->
+						<arch>x86</arch>
+						<!--激活profile的操作系统版本-->
+						<version>5.1.2600</version>
+					</os>
+					<!--如果Maven检测到某一个属性（其值可以在POM中通过${name}引用），其拥有对应的(属性)mavenVersion= （值）2.0.3，Profile就会被激活。如果值字段是空的，那么存在属性名称字段就会激活profile，否则按区分大小写方式匹配属性值字段-->
+					<property>
+						<!--激活profile的属性的名称-->
+						<name>mavenVersion</name>
+						<!--激活profile的属性的值 -->
+						<value>2.0.3</value>
+					</property>
+					<!--提供一个文件名，通过检测该文件的存在或不存在来激活profile。missing检查文件是否存在，如果不存在则激活profile。另一方面，exists则会检查文件是否存在，如果存在则激活profile。-->
+					<file>
+						<!--如果指定的文件存在，则激活profile。 -->
+						<exists>${basedir}/file2.properties</exists>
+						<!--如果指定的文件不存在，则激活profile。-->
+						<missing>${basedir}/file1.properties</missing>
+					</file>
+				</activation>				
+				<!--对应profile的扩展属性列表。Maven属性和Ant中的属性一样，可以用来存放一些值。这些值可以在POM中的任何地方使用标记${X}来使用，这里X是指属性的名称。属性有五种不同的形式，并且都能在settings.xml文件中访问。
+					1. env.X: 在一个变量前加上"env."的前缀，会返回一个shell环境变量。例如,"env.PATH"指代了$path环境变量（在Windows上是%PATH%）。
+					2. project.x：指代了POM中对应的元素值。例如: <project><version>1.0</version></project>通过${project.version}获得version的值。
+					3. settings.x: 指代了settings.xml中对应元素的值。例如：<settings><offline>false</offline></settings>通过 ${settings.offline}获得offline的值。
+					4. Java System Properties: 所有可通过java.lang.System.getProperties()访问的属性都能在POM中使用该形式访问，例如 ${java.home}。
+					5. x: 在<properties/>元素中，或者外部文件中设置，以${someVar}的形式使用。 -->
+				<properties>
+					<user.install>${user.home}/our-project</user.install>
+				</properties>note：如果该profile被激活，则可以再POM中使用${user.install}。
+				
+				<repositories>				
+					<repository>
+						<releases>
+							<enabled>false</enabled>
+							<!--该元素指定更新发生的频率。Maven会比较本地POM和远程POM的时间戳。这里的选项是：always（一直），daily（默认，每日），interval：X（这里X是以分钟为单位的时间间隔），或者never（从不）-->
+							<updatePolicy>always</updatePolicy>
+							<!--当Maven验证构件校验文件失败时该怎么做-ignore（忽略），fail（失败），或者warn（警告）。-->
+							<checksumPolicy>warn</checksumPolicy>
+						</releases>
+						<snapshots>
+							<enabled>true</enabled>
+							<updatePolicy>never</updatePolicy>
+							<checksumPolicy>fail</checksumPolicy>
+						</snapshots>
+						<id>codehausSnapshots</id>
+						<name>Codehaus Snapshots</name>
+						<url>http://snapshots.maven.codehaus.org/maven2</url>
+						<layout>default</layout>
+					</repository>
+					<pluginRepositories>
+						<releases>      
+							<enabled/><updatePolicy/><checksumPolicy/>
+						</releases>
+						<snapshots>
+							<enabled/><updatePolicy/><checksumPolicy/>
+						</snapshots>
+						<id/><name/><url/><layout/>
+					</pluginRepositories>
+				</repositories>
+				<!--手动激活profiles的列表，按照profile被应用的顺序定义activeProfile。 该元素包含了一组activeProfile元素，每个activeProfile都含有一个profile id。任何在activeProfile中定义的profile id，不论环境设置如何，其对应的
+					profile都会被激活。如果没有匹配的profile，则什么都不会发生。例如，env-test是一个activeProfile，则在pom.xml（或者profile.xml）中对应id的profile会被激活。如果运行过程中找不到这样一个profile，Maven则会像往常一样运行。 -->
+				<activeProfiles>
+						<activeProfile>env-test</activeProfile>
+				</activeProfiles>
+			</profile>
+		</profiles>
+			
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		

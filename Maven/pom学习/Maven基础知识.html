@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Maven</title>
+<style>
+span{font-size:1em;font-weight:bold;color:red;}
+dt{font-size:1.875em; color:blue;}
+dd{font-size:1.6em;line-height:inherite;color:#f00dee;}
+li{font-size:0.8em;color:black;}
+a:link{ color:#20B2AA;text-decoration:none;}
+a:visited {color: #B0C4DE ;}
+a:hover{ color:green;text-decoration:underline;}
+</style>
+<base href="../basicsProblem/Ch02/"/>
+</head>
+<body>
+<h1>browse repository的网站（方便查找依赖）：<br>
+<a href="https://repository.sonatype.org/index.html#nexus-search;quick~junit">https://repository.sonatype.org/index.html#nexus-search;quick~junit</a><br>
+搜索后，找到想要的类库，然后就能看到对应的 <dependency>的内容。直接将该段xml复制到自己的pom.xml中就可以了。<br>
+POM详细参考手册：<a href="http://maven.apache.org/pom.html">http://maven.apache.org/pom.html </a>
+</h1>
+<dl>
+	<dt>pom配置</dt>
+	<dd>Super POM
+		<ol>
+			<li>所有的POM都继承了super POM,子POM中的配置信息会覆盖Super POM中的重复项。</li>
+			<li>到Super POM中配置的默认repository，http://repo1.maven.org/maven2去下载</li>
+		</ol>
+	</dd>
+	<dd>Project Inheritance 项目继承
+		<ol>
+			<li>子POM:<pre>&lt;project>
+	&lt;modelVersion>4.0.0&lt;/modelVersion>
+	&lt;groupId>com.company.app&lt;/groupId>
+	&lt;artifactId>my-module&lt;/artifactId>
+	&lt;version>0.0.1&lt;/version>
+&lt;/project>
+目录结构如下：
+ |-- my-module
+ |   `-- pom.xml
+ `-- pom.xml
+</pre>
+			</li>
+			<li>引入父POM:<pre>&lt;project>
+	&lt;parent>
+		&lt;groupId>com.company.app&lt;/groupId>
+		&lt;artifactId>my-app&lt;/artifactId>
+		&lt;version>0.0.1&lt;/version>
+	&lt;/parent>
+	&lt;modelVersion>4.0.0&lt;/modelVersion>
+	&lt;groupId>com.company.app&lt;/groupId>
+	&lt;artifactId>my-module&lt;/artifactId>
+	&lt;version>0.0.1&lt;/version>
+&lt;/project>
+<span>另外，如果我们希望my-module的groupId和/或version与父项目保持一致，我们甚至可以删除my-module的POM中的groupId和/或version。</span></pre>
+			</li>
+			<li>上例有局限性：只有当父项目已经安装到local repository中，或者必须是特殊的文件结构(父项目的pom.xml在子项目的pom.xml的父一级目录里)时，上例才工作；
+			每次修改了父项目的代码后，必须运行：mvn install //将父项目编译并加入到repository中之后才能顺利的运行子项目。平行目录会有问题。
+			<span>解决办法：在parent中使用relativePath</span><pre>&lt;project>
+	&lt;parent>
+		&lt;groupId>com.company.app&lt;/groupId>
+		&lt;artifactId>my-app&lt;/artifactId>
+		&lt;version>0.0.1&lt;/version>
+		&lt;relativePath>../parent/pom.xml&lt;relativePath>
+	&lt;/parent>
+	&lt;modelVersion>4.0.0&lt;/modelVersion>
+	&lt;groupId>com.company.app&lt;/groupId>
+	&lt;artifactId>my-module&lt;/artifactId>
+	&lt;version>0.0.1&lt;/version>
+&lt;/project>
+relativePath为module的pom.xml到父pom.xml的相对路径。
+			</li>
+		</ol>
+	</dd>
+	<dd>Project Aggregation 项目集成
+		<ol>
+			<li>与继承不同，在父POM中设置my-module:<br>
+			通过这种方式，父项目在知道它的子模块同时，如果在父项目上执行Maven命令，父项目和所有的子模块都会执行该命令<br>
+			<span>要使用集成，必须将父POM的packaging改为“pom”，然后在父POM中设置子模块的路径。</span>
+<pre>&lt;project>
+  &lt;modelVersion>4.0.0&lt;/modelVersion>
+  &lt;groupId>com.mycompany.app&lt;/groupId>
+  &lt;artifactId>my-module&lt;/artifactId>
+  &lt;version>0.0.1&lt;/version>
+&lt;/project>
+&lt;project>
+  &lt;modelVersion>4.0.0&lt;/modelVersion>
+  &lt;groupId>com.mycompany.app&lt;/groupId>
+  &lt;artifactId>my-app&lt;/artifactId>
+  &lt;version>0.0.1&lt;/version>
+  &lt;packaging>pom&lt;/packaging>
+
+  &lt;modules>
+   &lt;module>my-module&lt;/module>
+  &lt;/modules>
+&lt;/project>
+目录结构仍然如下：
+ |-- my-module
+ |   `-- pom.xml
+ `-- pom.xml</pre>
+<span>现在，对于my-app运行的任何一个Maven命令(或者说phase或goal)，同时也会在my-module上运行。</span>
+			</li>		
+		</ol>		
+	</dd>
+	<dd><pre>但是如果我们将目录改为：
+ |-- my-module
+ |   `-- pom.xml
+ `-- parent
+     `-- pom.xml
+父pom应该怎么设置呢？</pre>
+		<ol>
+			<li>解决办法：添加相对路径：
+<pre>&lt;project>
+  &lt;modelVersion>4.0.0&lt;/modelVersion>
+  &lt;groupId>com.mycompany.app&lt;/groupId>
+  &lt;artifactId>my-module&lt;/artifactId>
+  &lt;version>0.0.1&lt;/version>
+&lt;/project>
+&lt;project>
+  &lt;modelVersion>4.0.0&lt;/modelVersion>
+  &lt;groupId>com.mycompany.app&lt;/groupId>
+  &lt;artifactId>my-app&lt;/artifactId>
+  &lt;version>0.0.1&lt;/version>
+  &lt;packaging>pom&lt;/packaging>
+
+  &lt;modules>
+   &lt;module>../my-module&lt;/module>
+  &lt;/modules>
+&lt;/project></pre>			
+			</li>
+		</ol>
+	</dd>
+	<dd>Maven总结
+		<dt><ol>
+<pre>当然了，你也可以同时使用项目集成和项目继承。意思是，你可以在子项目的pom中配置parent，同时在父项目中配置modules。你只需要明确下面3个规则：
+1， 在每一个子项目pom中都要配置parent。
+2，将父项目pom的packaging改为“pom”。
+3，在父pom中配置子modules。
+(译者：到此项目间的关系已经讲完了，让我们来总结一下：
+当我们拿到了几个相关项目时，一定要先搞清楚这些项目间的父子关系。我们不仅要考察每一个项目的pom文件，弄清楚他们之间的集成和继承关系，也需要留意项目的目录结构，以防止有些设置并没有生效。
+只有弄清楚了项目的关系，我们才能正确的使用Maven的功能)
+<span>另外需要说明的一点，如果打开本地的repository，你会发现每个artifact(通常是jar包)也有自己的pom文件。其实原因很简单：Maven也要管理这些artifact。比如类库A，同时也依赖于类库B，C。
+因此repository中的artifact也需要pom文件来说明它们之间的关系)</span></pre>
+		</ol></dt>
+	</dd>
+	<dt>项目的插入值和变量</dt>
+	<dd>三种可以使用的变量
+		<ol>	
+			<li>properties<br>
+<pre>&lt;version>${project.version}&lt;/version>
+同时，在pom文件中定义：
+&lt;project>
+  ...
+  &lt;properties>
+    &lt;version>1.0.4&lt;/version>
+  &lt;/properties>
+  ...
+&lt;/project>
+<span>需要注意的是，这些变量是在继承机制生效后赋值的。这意味着，如果一个父项目pom包含变量，这些变量会被子项目继承并可以在子项目中直接使用。
+<span></pre>
+			</li>
+			<li>Project Model Variables<br>
+				所有在pom中的独立的element都可以作为一个变量。例如:<br>
+				${project.groupId},${project.version},${project.build.sourceDirectory} 等等。<br>
+				参考POM reference来得到所有的properties。
+			</li>
+			<li>Special Variables<br>
+				对于build timestamp的格式问题，可以通过&lt;maven.build.timestamp.format>指定，如下：<br>
+<pre>&lt;project>
+  ...
+  &lt;properties>
+    &lt;maven.build.timestamp.format>yyyyMMdd-HHmm&lt;/maven.build.timestamp.format>
+  &lt;/properties>
+  ...
+&lt;/project></pre><br>
+日期格式需要遵守的规则可以参考 SimpleDateFormat(java的)的API文档。如果没有设置这个值，则使用上例中的默认值。
+			</li>
+		</ol>
+	</dd>
+</dl>
+</body>
+</html>
