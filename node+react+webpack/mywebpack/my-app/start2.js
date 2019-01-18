@@ -1,0 +1,1 @@
+module.exports = "It works from start2.js.";

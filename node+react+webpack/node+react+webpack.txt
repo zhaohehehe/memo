@@ -1,0 +1,16 @@
+1.安装node.js
+2.npm init 生成package.json（skip）
+3.npm install -g create-react-app（快速创建react项目）
+4.create-react-app my-app
+5.cd my-app/
+6.npm start（启动访问即可）
+7.npm run build（打包发布）
+
+8.npm install webpack//webpack本省只能处理JavaScript模块，如果处理其他类型的文件，需要使用loader装换；
+    （1）css-loader //会遍历css文件，然胡找到url()处理；
+    （2）style-loader //会把原来的css代码插入页面中的一个style标签中；
+    npm install css-loader style-loader
+    npm install webpack --save-dev //文件头部输出注释信息
+9.  webpack-dev-server开发服务，并以监听模式运行；
+    npm install webpack-dev-server -g（安装）
+    webpack-dev-server --progress --colors（运行）
