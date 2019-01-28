@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IOC</title>
+<style>
+body{
+line-height:35px;
+}
+li.head{
+	font-style:italic;
+	font-size:1.4em;
+	color: #008080;
+}
+dt{
+ color:blue;
+ font-size:1em;
+}
+.content{
+	color: #DAA520;
+	list-style-type:decimal-leading-zero;
+	font-style:normal;
+	font-size:0.9em;
+}
+pre{
+	font-size:16px;
+	color:black;
+	line-height:110%;
+}
+span{
+ color:blue;
+ font-size:0.9em;
+}
+figcaption{
+	font-style:italic;
+}	
+figure{
+	text-align:center;
+}
+</style>
+</head>
+<body>
+<h1>1.spring-framework-reference:</h1>
+<ol>
+	<li class="head">Core Container
+		<ol class="content">
+			<li><span>spring-core+spring-bean:</span>IOC容器和依赖注入</li>
+			<li><span>spring-context:</span>基于1（继承了beans的特性）；增加了对国际化的支持（resource bundles），事件驱动，资源加载，透明的上下文创建（例如Servlet容器），支持JAVA EE特征.<br>
+				<span>核心接口:</span>ApplicationContext;<br>
+			</li>	
+			<li><span>spring-context-support:</span>支持conmmon的第三方lib（包括caching (EhCache, Guava, JCache), mailing (JavaMail), scheduling (CommonJ, Quartz) and template engines (FreeMarker, JasperReports, Velocity)等）到spring应用上下文中
+			</li>
+			<li><span>spring-expression:</span>spring的EL表达式（SpEL）,表达式解析通过ExpressionParser parser = new SpelExpressionParser();中文参见：http://www.cnblogs.com/best/p/5748105.html</li>
+		</ol>
+	</li>
+	<li class="head">AOP and Instrumentation
+		<ol class="content">
+			<li><span>spring-aop:</span></li>
+			<li><span>spring-aspects:</span>集成AspectJ.<br>
+			</li>	
+			<li><span>spring-instrument:</span>class instrumentation support and classloader implementations to be used in certain application servers</li>
+			<li><span>spring-instrument-tomcat:</span> contains Spring’s instrumentation agent for Tomcat.</li>
+		</ol>
+	</li>
+	<li class="head">Messaging
+		<ol class="content">
+			<li><span>spring-messaging:</span>包括对spring integration项目（例如Message,MessageChannel,MessageHandler）的key抽象；<br>
+				作为基础服务于基于信息的应用<br>
+				包含将信息映射成方法的注解（类似SpringMVC的annotation）；
+			</li>
+		</ol>
+	</li>
+	<li class="head">Data Access/Integration
+		<ol class="content">
+			<li><span>spring-jdbc:</span>提供JDBC的抽象层，去除了繁杂的JDBC代码</li>
+			<li><span>spring-tx:为实现特殊接口的类或者pojos提供声明的事务管理</span></li>
+			<li><span>spring-orm:</span></li>
+			<li><span>spring-jms(Java Message Service):</span>包含生产消费信息的特征，从4.1开始和spring-messaging集成在一起</li>
+			三个都是java实体对象，vo，跟po比较类似，po是persistent object，是在是orm框架中的entity，po的每个属性基本上都对应数据库表里面的某个字段，而vo(value object)有时可以跟po一样，有时并不对应。POJO（Plain Old Java Objects）是简单java对象，他并不继承任何类（继承Object），实现任何接口，只有属性跟get set方法。而po一般要实现序列化接口，有时也继承一些类
+		</ol>
+	</li>
+	<li class="head">Web
+		<ol class="content">
+			<li><span>spring-web:</span>包括基础的web特征，包括文件上传，使用Servlet Listener 和web应用上下文初始化IOC容器，也包含一个HTTP客户端以及有关web的spring远程支持。</li>
+			<li><span>spring-webmvc（Web Servlet）:</span>包含Spring的MVC（分离web表单和model+集成Spring框架的其他特征）和REST Services实现；</li>
+			<li><span>spring-webmvc-portlet:</span>用于Portlet环境</li>
+			<li><span>spring-websocket:</span></li>
+		</ol>
+	</li>
+	<li class="head">Test
+		<ol class="content">
+			<li><span>spring-test:</span>支持单元测试和集成测试（junit和TestNG。提供连续的ApplicationContext的加载和缓存，也可以提供用于mock测试的mock objects</li>
+		</ol>
+	</li>
+</ol>
+<h1>1.IOC:</h1>
+<ol>	
+	<li class="head">控制反转（Inversion of Control，英文缩写为IoC）:http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/
+		<ol class="content">
+			<li><span>面向对象编程</span></li>
+			<li><span>削减计算机程序的耦合问题</span><br>
+<pre>
+1.出现耦合问题：
+classA{
+   AInterface a;
+   A(){}    
+   AMethod()//一个方法
+   { a = new AInterfaceImp();	}
+}</pre>
+<pre>
+2.工厂模式缓解耦合问题，但是不能消除：
+InterfaceImplFactory
+{
+   AInterface create(Object condition)
+   {
+      if(condition == condA)
+      {
+          return new AInterfaceImpA();
+      }
+      else if(condition == condB)
+      {
+          return new AInterfaceImpB();
+      }
+      else
+      {
+          return new AInterfaceImp();
+      }
+    }
+}</pre>
+<pre>3.IOC模式彻底解耦</pre>
+			</li>
+			<li><span>类型:</span>依赖注入（Dependency Injection，简称DI）和依赖查找（Dependency Lookup），前者应用广泛。</li>
+			<li><span>控制反转是，关于一个对象如何获取他所依赖的对象的引用，这个责任的反转</span></li>
+			<li><span>IOC模式</span>
+				<ol>
+					<li>它把耦合(要生成的对象)从代码中移出去，放到统一的XML 文件(定义要生成的对象)中，通过一个容器在需要的时候把这个依赖关系形成<span>(利用Java 的“反射”编程，根据XML中给出的类名生成相应的对象)</span>，即把需要的<span>接口实现</span>注入到需要它的类中，这可能就是“依赖注入”说法.</li>
+					<li>在过去，反射编程方式相对于正常的对象生成方式要慢10几倍。但经SUN改良优化后，反射方式生成对象和通常对象生成方式，依然有一倍以上的差距。</li>
+				</ol>
+			</li>
+		</ol>
+	</li>
+	<li class="head">...
+		<figure class="content">
+ 				<img src="../JavaWeb/images/..." alt="javaBeanParam" width="80%" height="160px"  style="margin-top:-30px;">
+  				<figcaption  style="margin:-20px auto"><span>...</span><br></figcaption>
+		</figure>
+	</li>
+	<li class="head">...<br>
+		<div>
+			<div style="float:left">
+				...
+			</div>
+			<div style="float:left">
+			 	<video width="420" controls>
+			 		<source src="../JavaWeb/videos/..." type="video/mp4">
+			 	</video>
+			</div>
+		</div>
+	</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
