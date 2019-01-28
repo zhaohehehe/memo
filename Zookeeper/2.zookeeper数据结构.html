@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Zookeeper study">
+<meta name="author" content="He Zhao">
+<title>Zookeeper数据结构</title>
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style type="text/css">
+.container {
+	width: 100%
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Zookeeper数据结构</h3>
+			</div>
+			<div class="row">
+				<div class="col-sm-5">
+					<img src="./imgs/zookeeper数据结构.png" />
+				</div>
+				<div class="col-sm-7">
+					<div class="panel-body">
+						<ul class="list-group">
+							<li class="list-group-item">（1）Znode</li>
+							<li class="list-group-item">ZooKeeper会维护一个具有层次关系的数据结构，它非常类似于一个标准的文件系统，树形结构的每个节点都被称作为Znode。
+								<br>Znode通过路径引用，如同Unix中的文件路径。路径必须是绝对的并且是唯一的。在ZooKeeper中，路径由Unicode字符串组成，并且有一些限制。字符串"/ZooKeeper"用以保存管理信息，比如关键配额信息。
+							</li>
+						</ul>
+						<ul class="list-group">
+							<li class="list-group-item">（2）数据结构</li>
+							<li class="list-group-item">Znode兼具文件和目录两种特点。既像文件一样维护着数据、元信息、ACL（Access
+								Control List，访问控制列表）、时间戳等数据结构，又像目录一样可以作为路径标识的一部分。 <br>每个Znode由3部分组成:
+								<br>（1）state：此为状态信息, 描述该Znode的版本, 权限等信息 <br>（2）data：与该Znode关联的数据
+								<br>（3）children：该Znode下的子节点 <br>ZooKeeper虽然可以关联一些数据，但并没有被设计为常规的数据库或者大数据存储，相反的是，它用来管理调度数据，比如分布式应用中的配置文件信息、状态信息等等元数据。这些数据的共同特性就是它们都是很小的数据，通常以KB为大小单位。ZooKeeper的服务器和客户端都被设计为严格检查并限制<strong>每个Znode的数据大小至多1M，</strong>但常规使用中应该远小于此值。
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="panel-body">
+					<ul class="list-group">
+						<li class="list-group-item">（3）节点类型</li>
+						<li class="list-group-item">ZooKeeper中的节点有两种，分别为临时节点（Ephemeral
+							Node）和永久节点(Persistent Node)。节点的类型在创建时即被确定，并且不能改变。
+							两种节点的区别在于是否依赖于会话（Session）而生存。<br>
+							<div class="well">客户端和ZooKeeper服务器的一次连接称为一次会话。客户端靠与服务器建立一个TCP的长连接来维持一个会话，客户端在启动的时候首先会与服务器建立一个TCP连接，通过这个连接客户端能够通过心跳检测与服务器保持有效的会话，也能向ZooKeeper服务器发送请求并获得响应。</div>
+							<br>①临时节点：该节点的生命周期依赖于创建它们的会话。一旦会话结束，临时节点将被自动删除，当然也可以手动删除。虽然每个临时的Znode都会绑定到一个客户端会话，但他们对所有的客户端还是可见的。另外，ZooKeeper的临时节点不允许拥有子节点。
+							<br>②永久节点：该节点的生命周期不依赖于会话，并且只有在客户端显式地执行删除操作的时候，他们才能被删除。
+							另外，当创建Znode的时候，用户可以请求在ZooKeeper的路径结尾添加一个递增的计数。这个计数对于此节点的父节点来说是唯一的，当客户端请求创建这个节点A后，ZooKeeper会根据父节点的zxid状态，为这个A节点编写一个全目录唯一的编号（这个编号只会一直增长）。这样的节点称为顺序节点。
+							<br>临时节点与永久节点都可以成为顺序节点。细分一下，共有四种节点类型： <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;①PERSISTENT-持久化目录节点
+							<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户端与ZooKeeper断开连接后，该节点依旧存在
+							<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;②PERSISTENT_SEQUENTIAL-持久化顺序编号目录节点
+							<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户端与ZooKeeper断开连接后，该节点依旧存在，只是ZooKeeper给该节点名称进行顺序编号
+							<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;③EPHEMERAL-临时目录节点
+							<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户端与ZooKeeper断开连接后，该节点被删除
+							<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;④EPHEMERAL_SEQUENTIAL-临时顺序编号目录节点
+							<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客户端与ZooKeeper断开连接后，该节点被删除，只是ZooKeeper给该节点名称进行顺序编号
+						</li>
+					</ul>
+					<ul class="list-group">
+						<li class="list-group-item">（4）节点类型</li>
+						<li class="list-group-item">
+							致使ZooKeeper节点状态改变的每一个操作都将使节点接收到一个Zxid格式的时间戳，并且这个时间戳全局有序。也就是说，每个对节点的改变都将产生一个唯一的Zxid。如果Zxid1的值小于Zxid2的值，那么Zxid1所对应的事件发生在Zxid2所对应的事件之前。
+							<br>实际上，ZooKeeper的每个节点维护者两个Zxid值，为别为：cZxid、mZxid。 <br>①cZxid：
+							是节点的创建时间所对应的Zxid格式时间戳。 <br>②mZxid：是节点的修改时间所对应的Zxid格式时间戳。 <br>实现中Zxid是一个64为的数字，它高32位是epoch用来标识Leader关系是否改变，每次一个Leader被选出来，它都会有一个新的epoch。低32位是个递增计数。
+						</li>
+					</ul>
+					<ul class="list-group">
+						<li class="list-group-item">（5）版本号</li>
+						<li class="list-group-item">
+							版本号是用来记录节点数据或者是节点的子节点列表或者是权限信息的修改次数。如果一个节点的version是1，那就代表说这个节点从创建以来被修改了一次。
+							<br>对节点的每一个操作都将致使这个节点的版本号增加。每个节点维护着三个版本号，他们分别为： <br>①version：节点数据版本号
+							。 <br>②cversion：子节点版本号。 <br>③aversion：节点所拥有的ACL版本号。
+						</li>
+					</ul>
+					<ul class="list-group">
+						<li class="list-group-item">（6）watcher机制</li>
+						<li class="list-group-item">
+
+							<div class="row">
+								<div class="col-sm-7">
+									<img src="./imgs/watcher机制.png" />
+								</div>
+								<div class="col-sm-5">
+									<div class="panel-body">
+										<ul class="list-group">
+											<li class="list-group-item">ZooKeeper允许用户在指定节点上注册一些Watcher，当数据节点发生变化的时候，ZooKeeper服务器会把这个变化的通知发送给感兴趣的客户端。<strong>这个是ZooKeeper
+													的核心特性，ZooKeeper 的很多功能都是基于这个特性实现的。</strong> <br>
+													<br>图中两个客户端都在ZooKeeper集群中注册了watcher（事件监听器），那么当ZooKeeper中的节点数据发生变化的时候，ZooKeeper会把这一变化的通知发送给客户端，当客户端收到这个变化通知的时候，会触发某些提前定义好的动作。
+												<br><br>一般来说，ZooKeeper会向客户端发送且仅发送一条通知。
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
