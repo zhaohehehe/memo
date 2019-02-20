@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+
+<title>Eclipse中添加ServerLocations并进行跨项目调试</title>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">Eclipse中添加ServerLocations</h4>
+			<p>(1)Eclipse中开发测试项目时，添加Sevver之后，默认选择的server location是 Use workspace metadata(dose not modify Tomcat installation)。
+			一般情况下指的是:工作区间\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps路径；<br>
+			也可以在Web Modules中配置path；
+			</p>
+			<hr>
+			<p>(2)可以修改为tomcat安装路径；</p>
+			<hr>
+			<p>(3)也可以自定义路径；</p>
+			<hr>
+			<span>注意：如果是Maven项目，选择第一个时，pom文件的资源过滤会失效，所有文件都会编译到server location路径中。
+			为了引起不必要的冲突，可以自定义location便于开发调试，参加以下跨项目pom开发调试配置。</span>
+		</div>
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">跨项目模块pom开发调试配置</h4>
+			<pre>
+			&lt;properties>
+				&lt;maven.develop.targetPath>D:\Workspace\TEMP\webapp-exesql\target\exesql&lt;/maven.develop.targetPath>
+			&lt;/properties>
+	
+			&lt;plugin>
+				&lt;artifactId>maven-resources-plugin&lt;/artifactId>
+				&lt;executions>
+					&lt;execution>
+						&lt;id>copy-resources&lt;/id>
+						&lt;phase>validate&lt;/phase>
+						&lt;goals>
+							&lt;goal>copy-resources&lt;/goal>
+						&lt;/goals>
+						&lt;configuration>
+							&lt;outputDirectory>${project.build.outputDirectory}&lt;/outputDirectory>
+							&lt;resources>
+								&lt;resource>
+									&lt;directory>
+										${basedir}/src/main/resources/META-INF/resources
+										&lt;!-- /src/main/resources/META-INF:
+													/web-fragment.xml
+													/MANIFEST.MF文件
+													/resources(js文件存放位置)
+										 -->
+										 &lt;!-- /src/main/resources/其他文件夹:
+													/配置文件(各种配置文件等)
+										 -->
+									&lt;/directory>
+									&lt;filtering>true&lt;/filtering>
+									&lt;targetPath>${maven.develop.targetPath}&lt;/targetPath>
+								&lt;/resource>
+								&lt;resource>
+									&lt;directory>${basedir}/src/main/resources/com/bonc&lt;/directory>
+									&lt;filtering>true&lt;/filtering>
+									&lt;targetPath>
+										${maven.develop.targetPath}\WEB-INF\classes\com\bonc
+									&lt;/targetPath>
+								&lt;/resource>
+								&lt;resource>
+									&lt;directory>${basedir}/src/main/resources&lt;/directory>
+									&lt;includes>
+										&lt;include>**/*.properties&lt;/include>
+										&lt;include>**/*.xml&lt;/include>
+										&lt;include>**/*.sql&lt;/include>
+									&lt;/includes>
+									&lt;filtering>true&lt;/filtering>
+									&lt;targetPath>
+										${maven.develop.targetPath}\WEB-INF\classes
+									&lt;/targetPath>
+								&lt;/resource>
+								&lt;resource>
+									&lt;directory>${basedir}/src/main/java&lt;/directory>
+									&lt;includes>
+										&lt;include>**/*.xml&lt;/include>
+										&lt;include>**/*.properties&lt;/include>
+										&lt;include>**/*.ftl&lt;/include>
+										&lt;include>**/*.txt&lt;/include>
+										&lt;include>**/*.sql&lt;/include>
+										&lt;include>**/*.xls&lt;/include>
+										&lt;include>**/*.xlsx&lt;/include>
+										&lt;include>**/*.tag&lt;/include>
+										&lt;include>**/*.htm&lt;/include>
+										&lt;include>**/*.html&lt;/include>
+									&lt;/includes>
+									&lt;filtering>true&lt;/filtering>
+									&lt;targetPath>
+										${maven.develop.targetPath}\WEB-INF\classes
+									&lt;/targetPath>
+								&lt;/resource>
+							&lt;/resources>
+						&lt;/configuration>
+					&lt;/execution>
+				&lt;/executions>
+			&lt;/plugin>			
+			</pre>
+			
+			<span>注意:在应用项目中排除对模块的依赖</span>
+		</div>
+		
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+</body>
+</html>
