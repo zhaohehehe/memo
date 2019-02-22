@@ -36,6 +36,37 @@
 			&lt;properties>
 				&lt;maven.develop.targetPath>D:\Workspace\TEMP\webapp-exesql\target\exesql&lt;/maven.develop.targetPath>
 			&lt;/properties>
+			&lt;plugin>
+				&lt;groupId>org.apache.maven.plugins&lt;/groupId>
+				&lt;artifactId>maven-compiler-plugin&lt;/artifactId>
+				&lt;executions>
+					&lt;execution>
+						&lt;id>compile-local&lt;/id>
+						&lt;phase>compile&lt;/phase>
+						&lt;goals>
+							&lt;goal>compile&lt;/goal>
+						&lt;/goals>
+						&lt;configuration>
+							&lt;outputDirectory>
+								${maven.develop.targetPath}\WEB-INF\classes
+							&lt;/outputDirectory>
+						&lt;/configuration>
+					&lt;/execution>
+					&lt;execution>
+						&lt;id>compile-remote&lt;/id>
+						&lt;phase>compile&lt;/phase>
+						&lt;goals>
+							&lt;goal>compile&lt;/goal>
+						&lt;/goals>
+						&lt;configuration>
+							&lt;outputDirectory>${project.build.outputDirectory}&lt;/outputDirectory>
+						&lt;/configuration>
+					&lt;/execution>
+				&lt;/executions>
+				&lt;configuration>
+					&lt;encoding>UTF-8&lt;/encoding>
+				&lt;/configuration>
+			&lt;/plugin>
 	
 			&lt;plugin>
 				&lt;artifactId>maven-resources-plugin&lt;/artifactId>
