@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+
+<title>spring API response处理net.sf.json.JSONNull问题</title>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading">spring API response处理net.sf.json.JSONNull问题</h4>
+			<ol>
+				<li>办法一：spring调整解析json的converter</li>
+				<li>办法二：对最终放入response的json进行null值过滤，以net.sf.json为例:
+					<pre>
+		JsonConfig jsonConfig = new JsonConfig();
+		PropertyFilter filter = new PropertyFilter() {
+			public boolean apply(Object object, String fieldName, Object fieldValue) {
+				if (fieldValue instanceof List) {
+					@SuppressWarnings("unchecked")
+					List&lt;Object> list = (List&lt;Object>) fieldValue;
+					if (list.size() == 0) {
+						return true;
+					}
+				}
+				// 过滤条件：值为null时过滤
+				return null == fieldValue;
+			}
+		};
+		jsonConfig.setJsonPropertyFilter(filter);
+		JSONObject json = JSONObject.fromObject(object, jsonConfig);					
+					</pre>
+				</li>
+			</ol>
+		</div>					
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+</body>
+</html>
