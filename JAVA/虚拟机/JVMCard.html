@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+
+<title>spring API response处理net.sf.json.JSONNull问题</title>
+</head>
+<body>
+	<div class="container-fluid">
+		 <div class="card">
+			<div class="card-body">无用类的判定条件：<ol><li>该类所有实例都已经被回收</li><li>加载该类的classLoader已经被回收</li><li>该类对应的class对象没有在任何地方被引用</li></ol></div>
+		</div>	
+		<div class="card">
+			<div class="card-body">GC停顿：在这个分析期间，为了保证准确性，整个系统看起来被冻结在某个时间点上，不可能出现分析过程中对象引用关系还在不断变化的情况。</div>
+		</div>
+		<div class="card">
+			<div class="card-body">安全点：不是所有地方都能GC,只有到达安全点时才能停顿GC。如果有线程没有到达安全点，那么等他们到达安全点再进行GC。</div>
+		</div>	
+		<div class="card">
+			<div class="card-body">安全区：是指在一段d代码片段中，引用关系不会发生变化。在安全区的任意地方开始GC都是安全的。可以看成是安全点的扩展，因为如果线程处于sleep或是block状态，那么等他们到达安全点是不可行的，这个时候线程无法响应中断。</div>
+		</div>			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+</body>
+</html>
