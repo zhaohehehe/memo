@@ -12,22 +12,121 @@
 	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 	crossorigin="anonymous">
 
-<title>spring API response处理net.sf.json.JSONNull问题</title>
+<title>JVM卡片</title>
 </head>
 <body>
 	<div class="container-fluid">
-		 <div class="card">
-			<div class="card-body">无用类的判定条件：<ol><li>该类所有实例都已经被回收</li><li>加载该类的classLoader已经被回收</li><li>该类对应的class对象没有在任何地方被引用</li></ol></div>
-		</div>	
+		<h4>参见《深入理解Java虚拟机_JVM高级特性与最佳实践 第2版》</h4>
+		<div class="card">
+			<div class="card-body">
+				无用类的判定条件：
+				<ol>
+					<li>该类所有实例都已经被回收</li>
+					<li>加载该类的classLoader已经被回收</li>
+					<li>该类对应的class对象没有在任何地方被引用</li>
+				</ol>
+			</div>
+		</div>
+		<br>
 		<div class="card">
 			<div class="card-body">GC停顿：在这个分析期间，为了保证准确性，整个系统看起来被冻结在某个时间点上，不可能出现分析过程中对象引用关系还在不断变化的情况。</div>
 		</div>
+		<br>
 		<div class="card">
 			<div class="card-body">安全点：不是所有地方都能GC,只有到达安全点时才能停顿GC。如果有线程没有到达安全点，那么等他们到达安全点再进行GC。</div>
-		</div>	
+		</div>
+		<br>
 		<div class="card">
 			<div class="card-body">安全区：是指在一段d代码片段中，引用关系不会发生变化。在安全区的任意地方开始GC都是安全的。可以看成是安全点的扩展，因为如果线程处于sleep或是block状态，那么等他们到达安全点是不可行的，这个时候线程无法响应中断。</div>
-		</div>			
+		</div>
+		<br>
+		<div class="card">
+			<div class="card-body">
+				<h5>类加载生命周期:</h5>
+				<p>加载、【验证、准备、解析】(连接)、初始化、使用、卸载。其中初始化的位置不固定，因为JAVAz支持动态绑定，例如动态代理。</p>
+			</div>
+			---------------------------------------------------------------------------------------------
+			<div class="card-body">
+				<span>验证：可以使用：Xverify:none关闭验证</span>
+				<p>1文件格式验证（class文件格式规范）</p>
+				<p>2元数据验证（JAVA语法规范，语义分析，例如如果类不是abstract,那么他是否实现了接口中定义的所有方法）</p>
+				<p>3字节码验证（指令合乎逻辑）</p>
+				<p>4符号引用验证</p>
+			</div>
+			---------------------------------------------------------------------------------------------
+			<div class="card-body">
+				<span>准备：方法区中进行类变量内存分配【注意：不是实例变量。非final变量赋零值，final赋真实值】</span>
+			</div>
+			---------------------------------------------------------------------------------------------
+			<div class="card-body">
+				<span>解析：将Class文件格式中提到的符号引用（<img src="常量池项目类型（字面量和符号引用）.png">7类，后面3类和JDK1.7新增动态语言相关，参见，PP221</img>）替换为直接引用，即找到是什么类？什么接口？有什么方法等？类比反射，就是根据Class文件解析出完整的.java文件。【符号引用目标可能未加载到内存中，但是引用规范已经在Class文件格式中定义好了；但是直接应用目标一定已经在内存中存在，并且和实际的虚拟机内存实现相关】
+				</span>
+			</div>
+			---------------------------------------------------------------------------------------------
+			<div class="card-body">
+				<span>初始化：真正开始执行JAVA代码。触发类初始化clinit场景：类主动引用，被动引用不会触发累的初始化。</span> <a
+					class="nav-link active" href="类初始化-多线程加锁同步clinit方法" target="_blank">类初始化-多线程加锁同步clinit方法</a>
+				<span>主动引用（有且只有以下5种，其中前三种类和接口有区别）：</span>
+				<ol>
+					<li>遇到new、getstatic、putstatic、invokestatic时(注意不包括final修饰或者在编译器放入常量池的静态字段)。</li>
+					<li>java.lang.reflect包方法对类进行反射调用时，如果类还没有进行初始化，需要进行初始化。</li>
+					<li>初始化某个类时，如果父类没有初始化，需要对父类触发初始化操作。</li>
+					<li>虚拟机启动时，用户指定执行类入口（带有main函数的类）需要初始化。</li>
+					<li>使用JDK1.7动态语言支持时。PP211</li>
+				</ol>
+				<span>被动引用：</span>
+				<ol>
+					<li>子类引用父类静态变量时，父类触发初始化，子类不会触发初始化。</li>
+					<li>通过数组定义引用类时，不会触发初始化，例如Superclass[] arr = new
+						Superclass[10];</li>
+					<li>引用final常量。</li>
+				</ol>
+			</div>
+		</div>
+		<br>
+		<div class="card">
+			<div class="card-body">类加载器：任意一个类都由加载它的类加载器和这个类本身来确定在JVM中的唯一性，也是判断类是否相等（Class对象的equals(),isAssignableFrom(),isInstance()方法以及instanceof关键字）的一个条件。</div>
+			<pre>package zhaohe.study.test;
+import java.io.InputStream;
+public class ClassLoaderTest {
+	public static void main(String[] args) throws Exception {
+		ClassLoader myLoader = new ClassLoader() {
+			@Override
+			public Class&lt;?> loadClass(String name) throws ClassNotFoundException {
+				String fileName = name.substring(name.lastIndexOf(".") + 1) + ".class";
+				// 这里的getClass代表ClassLoaderTest的自定义ClassLoader
+				InputStream is = getClass().getResourceAsStream(fileName);
+				//is = ClassLoader.getSystemResourceAsStream(fileName);// AppClassLoader
+				if (is == null) {
+					System.out.println("系统应用程序加载的:" + name);
+					return super.loadClass(name);
+				}
+				byte[] bytes = null;
+				try {
+					bytes = new byte[is.available()];
+					is.read(bytes);
+					System.out.println("自定义类加载器加载的:" + fileName);
+					return defineClass(name, bytes, 0, bytes.length);
+				} catch (Exception e) {
+					throw new ClassNotFoundException(name);
+				}
+			}
+		};
+		Object obj = myLoader.loadClass("zhaohe.study.test.ClassLoaderTest").newInstance();
+		// 自定义类加载器
+		System.out.println(obj.getClass().getClassLoader());
+		// 系统y应用程序类加载器(AppClassLoader)
+		System.out.println(zhaohe.study.test.ClassLoaderTest.class.getClassLoader());
+		System.out.println(obj instanceof zhaohe.study.test.ClassLoaderTest);// false
+	}
+}
+			</pre>
+		</div>
+		<div class="card">
+			<div class="card-body">
+				<a class="nav-link active" href="双亲委派模型的破坏" target="_blank">双亲委派模型的破坏</a>
+			</div>
+		</div>
 
 
 
@@ -35,23 +134,9 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		
+		<div class="card">
+			<div class="card-body"></div>
+		</div>
 	</div>
 	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
 		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
