@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+
+<title>JVM内存模型与线程</title>
+</head>
+<body>
+	<div class="container-fluid">
+		<h4>参见《深入理解Java虚拟机_JVM高级特性与最佳实践 第2版》</h4>
+		<div class="card">
+			<div class="card-body">
+				Amdahl定律：
+				<ol>
+					<li>原计算机采用升级模式后的执行时间等于该计算机未升级部分耗用的时间加上使用升级部分耗用的时间：</li>
+					<li>新执行时间=原执行时间x((1-升级比例)+升级比例/升级加速比)</li>
+					<li>总加速比：原执行时间/新执行时间=1/((1-升级比例)+升级比例/升级加速比)</li>
+				</ol>
+			</div>
+			<div class="card-body">
+				<p>Q:假设我们希望升级一个用于提供Web服务的处理器。新处理器执行Web服务应用程序的计算速度是原处理器的10倍。
+					假定原处理器有40%的时间忙于计算，60%的时间等待I/O，进行这一升级后，所得到的总加速比为多少？</p>
+				<p>A:升级比例：原计算机计算时间中可升级部分所占的比例。
+					例如，一个程序的总执行时间为60秒，如果有20秒的执行时间可进行升级，那这个比例就是20/60，它总是小于或等于1。</p>
+				<p>升级比例=0.4、升级加速比=10、总加速比=1/(0.6+0.4/10)=1.56</p>
+				<p>结论：如果改进一部分的性能，在增加改进时，获得的加速比增量会逐渐减少。</p>
+			</div>
+		</div>
+		<br>
+		
+		<div class="card">
+			<div class="card-body"><h5>内存交互限定：参见笔记</h5></div>
+			<div class="card-body"><h5>其他限定:</h5>
+				<ol>
+					<li>volatile可见性测试</li>
+				</ol>	
+			</div>
+		</div>
+		
+
+
+
+
+
+		<div class="card">
+			<div class="card-body"></div>
+		</div>
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+</body>
+</html>
