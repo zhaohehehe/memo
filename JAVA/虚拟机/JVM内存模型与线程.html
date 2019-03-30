@@ -36,16 +36,34 @@
 			</div>
 		</div>
 		<br>
-		
+
 		<div class="card">
-			<div class="card-body"><h5>内存交互限定：参见笔记</h5></div>
-			<div class="card-body"><h5>其他限定:</h5>
+			<div class="card-body">
+				<h5>(一)内存交互限定：参见笔记</h5>
+			</div>
+			<div class="card-body">
+				<h5>(二)其他限定:</h5>
 				<ol>
-					<li>volatile可见性测试</li>
-				</ol>	
+					<li>原子性：直接原子性操作(JAVA内存模型)；大范围原子性(synchronized)</li>
+					<li>可见性：volatile、synchronized、final</li>
+					<li>有序性：volatile(禁止指令重排)、synchronized(lock)</li>
+				</ol>
+			</div>
+			<div class="card-body">
+				<h5>(三)先行发生原则:时间上的先发生不代表是先行发生，先行发生也不代表时间上的先发生。</h5>
+				<ol>
+					<li>程序次序规则：逻辑控制流顺序(分支、循环等)</li>
+					<li>管程锁定规则：unlock先行发生于lock，前提是同一个锁。对于一把锁来说，先解开才能再去锁其他的门。</li>
+					<li>volatile变量规则：volatile变量的写操作先行与读操作。先进性主存同步，然后才能读。</li>
+					<li>线程启动规则：Thread对象的start()方法先行与线程的每个动作。</li>
+					<li>线程中止规则：线程的所有操作先行于中止检测。可以通过Thread.join()方法结束、Thread.isAlive()的返回值等手段检测到线程已经中止执行。</li>
+					<li>线程中断规则：Thread.interrupt()的调用先行于检测到中断事件的发生，可以通过Thread.interrupted()方法检测线程是否有中断发生。</li>
+					<li>对象终结规则：对象初始化完成先行于发生他的finalize()。</li>
+					<li>传递性：如果A先于B，B先于C，那么A先于C。</li>
+				</ol>
 			</div>
 		</div>
-		
+
 
 
 

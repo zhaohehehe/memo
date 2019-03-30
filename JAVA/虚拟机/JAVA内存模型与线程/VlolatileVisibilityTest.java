@@ -1,4 +1,4 @@
-package com.bonc.dataplatform.demo;
+package thread;
 
 public class VlolatileVisibilityTest {
 	private static int race;
@@ -32,5 +32,50 @@ public class VlolatileVisibilityTest {
 		/*
 		 * 多执行几次，发现打印结果并不一定是20000
 		 */
+	}
+}
+
+/**
+ * 适合使用volatile的场景，必须保证：
+ * <p>
+ * 1.运算结果不依赖当前变量的值；
+ * <p>
+ * 2.变量不需要与其他状态变量共同参与不变约束
+ */
+class VlolatileVisibilityTest2 {
+	private volatile boolean shutdownRequested;
+
+	public void shutdown() {
+		shutdownRequested = true;
+	}
+
+	public void doWork() {
+		while (!shutdownRequested) {
+			// do something
+		}
+	}
+}
+
+/**
+ * volatile禁止指令重排序： 指令重排序？例如以下doWork方法中①处的代码可能在它处于位置的前面执行，这样并发时可能会导致逻辑错误，而
+ * volatile可以禁止这种指令优化重排，它添加了内存屏障PP371
+ */
+class VlolatileVisibilityTest3 {
+	private volatile boolean isDone;
+
+	public void doWork() {
+		if (!isDone) {
+			this.doSomething();
+		}
+		this.doAnotherthing();
+		isDone = true;// ①
+	}
+
+	private void doSomething() {
+
+	}
+
+	private void doAnotherthing() {
+
 	}
 }
