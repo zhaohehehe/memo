@@ -68,19 +68,50 @@
 			<h4>线程安全的实现方法</h4>
 			<div class="card-body">
 				<ol>
-					(一)互斥同步：
-					<li>syncnronized：syncnronized是一种<a href="线程锁">可重入锁</a>。线程的阻塞或者唤醒需要操作系统的帮忙，所以需要在用户态和核心态之间频繁切换，导致耗时。可以使用一些自旋操作避免频繁的切入到核心态之中。</li>
+					(一)互斥同步(阻塞同步，悲观锁)：
+					<li>syncnronized：syncnronized是一种<a href="线程锁">可重入锁</a>。线程的阻塞或者唤醒需要操作系统的帮忙，所以需要在用户态和核心态之间频繁切换，导致耗时。可以使用一些自旋操作避免频繁的切入到核心态之中。
+					</li>
 					<li>java.util.concurrent.locks.ReentrantLock：可重入锁和syncnronized类似，只不过实现了以下<img
-						src="ReentrantLock高级功能.png">高级功能</img>。但是在JVM不断发展中，建议使用syncnronized。
+						src="线程锁/ReentrantLock高级功能.png">高级功能</img>。但是在JVM不断发展中，建议使用syncnronized。
 					</li>
 				</ol>
 			</div>
 			<div class="card-body">
 				<ol>
-					(二)互斥同步：
-					<li>syncnronized：syncnronized是一种可重入锁。线程的阻塞或者唤醒需要操作系统的帮忙，所以需要在用户态和核心态之间频繁切换，导致耗时。可以使用一些自旋操作避免频繁的切入到核心态之中。</li>
-					<li>java.util.concurrent.locks.ReentrantLock：可重入锁和syncnronized类似，只不过实现了以下<img
-						src="ReentrantLock高级功能.png">高级功能</img>。但是在JVM不断发展中，建议使用syncnronized。
+					(二)非阻塞同步(乐观锁：先操作，然后靠硬件实现乐观冲突检测,既然是和硬件相关，当然只能使用BootstrapClassLoader加载,如果不采用反射，只能通过JAVA其他API间接使用)。
+					<p>以下常用硬件原子性处理器指令有：</p>
+					<li>测试并设置（Test-and-set）</li>
+					<li>获取并增加（Fetch-and-Increment）</li>
+					<li>交换（Swap）</li>
+					<li>比较并交换（Compare-and-Swap）(CAS)(现代处理器新增：CAS无论是否新增都会返回旧值，可以失败重试，但是会出现ABA问题)</li>
+					<li>加载链条/条件存储（Load-Linked/Store-Conditional）(LL/SC)(现代处理器新增)</li>
+				</ol>
+			</div>
+			<div class="card-body">
+				<ol>
+					(三)无同步方案：
+					<li>可重入代码</li>
+					<li>线程本地存储：例如一个请求对应一个服务器线程（Thread-per-request）。JAVA中，如果一个变量需要被多线程访问，可以使用volatile;如果要被某个线程独享，可以使用java.lang.ThreadLocal类实现本地存储。</li>
+				</ol>
+			</div>
+		</div>
+
+		<br>
+		<div class="card">
+			<h4>锁优化</h4>
+			<div class="card-body">
+				<ol>
+					<li>自旋锁：自旋等待可以避免频繁线程切换的开销，但是等待中会占用处理器时间，如果锁占用时间短，锁自旋等待效果很好，反之只会消耗处理器资源。
+						所以自旋锁的等待时间要有一定限度，如果超过限定次数仍然没有获得锁，就应该使用传统方式去挂起线程了。
+						JDK1.6引用自使用自旋锁，可以根据前一次在同一个锁上的自旋次数以及获得锁情况进行预测，自适应设定等待时间。</li>
+					<li>消除锁：消除掉代码里面加了锁，但实际上不会有线程安全问题的锁。</li>
+					<li>锁粗化：避免细粒度加锁导致的性能开销。</li>
+					<li>轻量级锁：无法替代重量级锁（操作系统互斥），只是在没有多线程竞争的前提下，减少重量级锁使用操作系统互斥量产生的性能消耗。如果有2条及以上线程征用同一把锁，那么轻量级锁不再有效，膨胀为重量级锁。<br>
+						<a href="线程锁/轻量级锁执行过程.jpg">轻量级锁执行过程</a>| <a
+						href="https://www.jianshu.com/p/3d38cba67f8b">MarkWord参考1</a>| <a
+						href="https://blog.csdn.net/lkforce/article/details/81128115">MarkWord参考2</a></li>
+					<li>偏向锁：消除数据在无竞争情况下的同步原语。轻量级锁是在无竞争的情况下使用CAS操作消除同步使用的互斥量，而偏向锁是在无竞争情况下把整个同步都消除掉，甚至CAS也会消除。
+						<br>可以提升有同步但是无竞争的程序性能。如果大多数的锁总是被程序中的不同线程访问，那么偏向锁就是多余的。可以使用参数禁止偏向锁优化。
 					</li>
 				</ol>
 			</div>

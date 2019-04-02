@@ -1,10 +1,14 @@
-package thread;
+package zhaohe.study.design;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class VlolatileVisibilityTest {
-	private static int race;
+	private volatile static int race;
+	private static AtomicInteger race2 = new AtomicInteger();
 
 	public static void increase() {
 		race++;
+		race2.incrementAndGet();
 	}
 
 	private static final int threshold = 20;
@@ -29,8 +33,11 @@ public class VlolatileVisibilityTest {
 			Thread.yield();
 		}
 		System.out.println(race);
+		System.out.println(race2);
 		/*
-		 * 多执行几次，发现打印结果并不一定是20000
+		 * 多执行几次，发现打印race结果并不一定是20000,race2为20000
+		 * <p>因为volatile不能保证原子性，如果想保证同步，一个是使用synchronized同步increase()方法，
+		 * 另一个比较高效的反法是使用 AtomicInteger.incrementAndGet()方法，该方法可以保证原子性。
 		 */
 	}
 }
