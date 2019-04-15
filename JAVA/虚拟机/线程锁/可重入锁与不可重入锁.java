@@ -1,5 +1,11 @@
 package zhaohe.study.design;
 
+/**
+ * 以家庭为单位进行打水
+ * 
+ * @author ZH
+ *
+ */
 public class ReentrantLockTest {
 	ReentrantLock lock = new ReentrantLock();
 
