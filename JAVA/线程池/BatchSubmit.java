@@ -1,4 +1,4 @@
-package com.bonc.dataplatform.workflowmonitor.dao.impl;
+package **;
 
 import java.util.Arrays;
 import java.util.List;

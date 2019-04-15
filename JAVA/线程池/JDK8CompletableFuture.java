@@ -1,4 +1,4 @@
-package com.bonc.dataplatform.workflowmonitor.dao.impl;
+package **;
 
 import java.math.BigDecimal;
 import java.util.concurrent.Callable;

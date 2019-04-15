@@ -1,4 +1,4 @@
-package com.bonc.dataplatform.workflowmonitor.dao.impl;
+package **;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
