@@ -56,6 +56,8 @@ public class MyThreadPoolExecutor extends ThreadPoolExecutor {
 	 * @param keepAliveTime【JVM借用工人的使用时间（为了提高性能，不能频繁借用）】
 	 *            当线程的数量大于核心线程数时，空闲线程如果等待keepAliveTime时间后，仍然没有接到新的任务，
 	 *            就会执行reject策略。
+	 *        当设置allowCoreThreadTimeOut(true)时，线程池中corePoolSize线程【空闲时间】达到keepAliveTime也将销毁关闭，
+	 *			默认值是false，超出corePoolSize的线程（即从JVM借来的临时工人）【空闲时间】达到keepAliveTime也将销毁关闭（即将临时工人还回去）
 	 * @param unit
 	 * @param workQueue【任务流水线】
 	 *            ①如果运行的线程数大等于corePoolSize但是小于maximumPoolSize,会添加一个新线程到队列(步骤②);
