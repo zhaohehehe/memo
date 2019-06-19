@@ -137,19 +137,14 @@ under the License.
     -->
 	<!--与distributionManagement中的repository的id相同-->
 		<server>
-			<id>myRepository</id>			
-			<username></username>
-			<password></password>
+			<id>releases</id>			
+			<username>*</username>
+			<password>*</password>
 		</server>
-		<!--<server>  
-			<id>snapshots</id>  
-			<username>014482</username>  
-			<password>gfgfggf</password>  
-		</server>-->
 		<server>  
 			<id>snapshots</id>  
-			<username></username>  
-			<password></password>  
+			<username>*</username>  
+			<password>*</password>  
 		</server> 		
 	</servers>
 
@@ -164,21 +159,13 @@ under the License.
    | repository, to be used as an alternate download site. The mirror site will be the preferred
    | server for that repository.
    |-->
-	<!--  <mirrors>
-		<mirror>
-			<id>maven-nexus</id>
-			<mirrorOf>*</mirrorOf>
-			<url>http://*/nexus/content/groups/public</url>
-		</mirror>
-	</mirrors>
-	-->
 	<!--id用来区分不同的mirror元素;mirrorOf表示被镜像的仓库的id-->
 	<mirrors>
 		<mirror>  
 			<id>maven-central</id> 
 			<mirrorOf>central</mirrorOf>     
 			<!-- <url>http://repo1.maven.org/maven2/</url>  -->
-			<url>http://maven.aliyun.com/nexus/content/groups/public/</url>   
+			<url>http://maven.aliyun.com/nexus/content/groups/public/</url> 
 		</mirror>  
 	</mirrors>
 	
@@ -217,7 +204,7 @@ under the License.
 			</properties>   
 		</profile> 		
 		<profile>
-			<id>myProfile</id>
+			<id>activeProfile</id>
 			<repositories>
 				<repository>
 					<id>snapshots</id>
@@ -235,8 +222,8 @@ under the License.
 					</snapshots>
 				</repository>
 				<repository>
-					<id>myRepository</id>
-					<url>http://*/nexus/content/repositories/myRepository/</url>
+					<id>releases</id>
+					<url>http://*/nexus/content/repositories/releases/</url>
 					<releases>
 						<enabled>true</enabled>
 						<updatePolicy>always</updatePolicy>
@@ -251,16 +238,6 @@ under the License.
 				<repository>
 					<id>public</id>
 					<url>http://*/nexus/content/groups/public/</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</repository>
-				<repository>
-					<id>thirdparty</id>
-					<url>http://*/nexus/content/repositories/thirdparty/</url>
 					<releases>
 						<enabled>true</enabled>
 					</releases>
@@ -287,20 +264,8 @@ under the License.
 			</pluginRepositories>  
 		</profile>
 	</profiles>
-
-	<!-- activeProfiles
-   | List of profiles that are active for all builds.
-   |
-  <activeProfiles>
-    <activeProfile>alwaysActiveProfile</activeProfile>
-    <activeProfile>anotherAlwaysActiveProfile</activeProfile>
-  </activeProfiles>
-  -->
-	<!-- <activeProfiles>
-	 <activeProfile>nexus</activeProfile>
-   </activeProfiles> -->
 	<activeProfiles>
-		<activeProfile>myProfile</activeProfile>
+		<activeProfile>activeProfile</activeProfile>
 	</activeProfiles>
 
 </settings>
