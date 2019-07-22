@@ -37,7 +37,20 @@
 			}
 		};
 		jsonConfig.setJsonPropertyFilter(filter);
-		JSONObject json = JSONObject.fromObject(object, jsonConfig);					
+		JSONObject json = JSONObject.fromObject(object, jsonConfig);
+<br>
+		或者
+		public static JsonConfig getOneJsonConfigInstance() {
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.setJsonPropertyFilter(new PropertyFilter() {
+				@Override
+				public boolean apply(Object arg0, String arg1, Object arg2) {
+					return "".equals(arg2) || arg2 instanceof net.sf.json.JSONNull;
+				}
+			});
+			return jsonConfig;
+		}
+		JSONObject json = JSONObject.fromObject(object, getOneJsonConfigInstance());
 					</pre>
 				</li>
 			</ol>

@@ -18,7 +18,7 @@ public class SQLUtil {
 			+ "|((([0-9]{2})(0[48]|[2468][048]|[13579][26])|((0[48]|[2468][048]|[3579][26])00))-02-29))";
 	private static final String TIME_REGEX = "(([0-1]?[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]))";
 	private static final String DATE_TIME_REGEX = "\\s*" + DATE_REGEX + "\\s*" + TIME_REGEX + "\\s*";
-	// private final static String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	public final static String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 	/**
 	 * 例如：2019-03-13 09:46:00->313,2018-10-13 09:46:00->1013
@@ -49,25 +49,26 @@ public class SQLUtil {
 	 */
 	public static final char MYSQL_BATCH_SPLIT = ',';
 
-	public static final String[] ORACLE_TO_CHAR_FUNCTION = new String[] { " to_char(", ") " };
-	public static final String[] MYSQL_TO_CHAR_FUNCTION = new String[] { " cast(", " as char) " };
+	protected static final String[] ORACLE_TO_CHAR_FUNCTION = new String[] { " to_char(", ") " };
+	protected static final String[] MYSQL_TO_CHAR_FUNCTION = new String[] { " cast(", " as char) " };
 
-	public static final String[] ORACLE_TO_DATE_FUNCTION = new String[] { " to_date(", ") " };
+	protected static final String[] ORACLE_TO_DATE_FUNCTION = new String[] { " to_date(", ") " };
+	protected static final String[] MYSQL_TO_DATE_FUNCTION = new String[] { " date_format(", ") " };
 	/**
 	 * oracle保留0位小数
 	 */
-	public static final String[] ORACLE_ROUND0_FUNCTION = new String[] { " round(", ",0) " };
+	protected static final String[] ORACLE_ROUND0_FUNCTION = new String[] { " round(", ",0) " };
 	/**
 	 * oracle保留2位小数
 	 */
-	public static final String[] ORACLE_ROUND2_FUNCTION = new String[] { " round(", ",2) " };
+	protected static final String[] ORACLE_ROUND2_FUNCTION = new String[] { " round(", ",2) " };
 	/**
 	 * mysql时间转化为秒
 	 */
-	public static final String[] MYSQL_TIME_TO_SEC_FUNCTION = new String[] { " time_to_sec(", ") " };
+	protected static final String[] MYSQL_TIME_TO_SEC_FUNCTION = new String[] { " time_to_sec(", ") " };
 
 	/**
-	 * oracle位运算sql
+	 * oracle位运算or
 	 */
 	public static final OperatorOnTwo oracle_bitwise_or = new OperatorOnTwo() {
 		private static final long serialVersionUID = 1L;
@@ -79,8 +80,21 @@ public class SQLUtil {
 					.toString();
 		}
 	};
+
 	/**
-	 * mysql位运算sql
+	 * oracle位运算and
+	 */
+	public static final OperatorOnTwo oracle_bitwise_and = new OperatorOnTwo() {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public String process(String aTimeField, String bTimeField) {
+			return new StringBuilder(" ").append("bitand(").append(aTimeField).append(",").append(bTimeField)
+					.append(")").append(" ").toString();
+		}
+	};
+	/**
+	 * mysql位运算or
 	 */
 	public static final OperatorOnTwo mysql_bitwise_or = new OperatorOnTwo() {
 		private static final long serialVersionUID = 1L;
@@ -88,6 +102,18 @@ public class SQLUtil {
 		@Override
 		public String process(String aTimeField, String bTimeField) {
 			return new StringBuilder(" ").append(aTimeField).append("|").append(bTimeField).append(" ").toString();
+		}
+	};
+
+	/**
+	 * mysql位运算and
+	 */
+	public static final OperatorOnTwo mysql_bitwise_and = new OperatorOnTwo() {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public String process(String aTimeField, String bTimeField) {
+			return new StringBuilder(" ").append(aTimeField).append("&").append(bTimeField).append(" ").toString();
 		}
 	};
 
@@ -151,4 +177,19 @@ public class SQLUtil {
 		public String process(String aTimeField, String bTimeField, String format);
 	}
 
+	public static String[] getOracleToCharFunction() {
+		return ORACLE_TO_CHAR_FUNCTION;
+	}
+
+	public static String[] getMysqlToCharFunction() {
+		return MYSQL_TO_CHAR_FUNCTION;
+	}
+
+	public static String[] getOracleToDateFunction() {
+		return ORACLE_TO_DATE_FUNCTION;
+	}
+
+	public static String[] getMysqlToDateFunction() {
+		return MYSQL_TO_DATE_FUNCTION;
+	}
 }
