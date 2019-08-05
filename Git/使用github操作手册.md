@@ -77,3 +77,25 @@
     
 
    如果不set关联，只需要执行一次完整命令$ git push -u origin master（或者$  git push --set-upstream origin master）即可，以后都不需要执行仓库，即执行git push即可。
+
+### 放弃本地修改
+
+1. 已经加入git index,但是未使用 git add 缓存
+
+   可以使用 git checkout -- filepathname (比如： git checkout -- readme.md  )。放弃所有的文件修改可以使用 git checkout .  命令。
+
+   此命令用来放弃掉所有还没有加入到缓存区（就是 git add 命令）的修改：内容修改与整个文件删除。但是此命令不会删除掉刚新建的文件。因为刚新建的文件还没已有加入到 git index 的管理系统中。
+
+2. 已经使用  git add （未验证）
+
+   可以使用  git reset HEAD filepathname （比如： git reset HEAD readme.md）来放弃指定文件的缓存，放弃所有缓存可以使用 git reset HEAD . 命令。
+
+   此命令用来清除 git  对于文件修改的缓存。相当于撤销 git add 命令所在的工作。**在使用本命令后，本地的修改并不会消失**，而是回到了如（一）所示的状态。继续用（一）中的操作，就可以放弃本地的修改。
+
+3. 已经用 git commit  提交了代码（未验证）
+
+   可以使用 git reset --hard HEAD 来回退到上一次commit的状态。此命令可以用来回退到任意版本：git reset --hard  commitid 
+
+   注意：使用 git log 命令来查看git的提交历史。
+
+ 
