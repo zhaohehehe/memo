@@ -17,7 +17,7 @@
 	show variables like "long_query_time";默认10s
 	-- 查看慢查询配置情况
 	show status like "%slow_queries%";
-	-- 查看慢查询日志路径
+	-- 查看慢查询日志路径，慢查询日志采用的是简单的文本格式，可以通过各种文本编辑器查看其中的内容。其中记录了语句执行的时刻，执行所消耗的时间，执行用户，连接主机等相关信息
 	show variables like "%slow%";
 -- 连接数	
 	-- MYSQL服务端允许的最大连接会话数量
@@ -68,6 +68,14 @@
 	-- 这里不知道和这个限制有没有关系？？？？？？？！！！show variables like 'open%'查看打开文件限制数量。
 	
 -- 如何在MySQL中分配innodb_buffer_pool_size
+	# InnoDB, unlike MyISAM, uses a buffer pool to cache both indexes and
+	# row data. The bigger you set this the less disk I/O is needed to
+	# access data in tables. On a dedicated database server you may set this
+	# parameter up to 80% of the machine physical memory size. Do not set it
+	# too large, though, because competition of the physical memory may
+	# cause paging in the operating system.  Note that on 32bit systems you
+	# might be limited to 2-3.5G of user level memory per process, so do not
+	# set it too high.
 	参考：https://www.cnblogs.com/wanbin/p/9530833.html
 	-- Performance = innodb_buffer_pool_reads / innodb_buffer_pool_read_requests * 100
 	-- innodb_buffer_pool_reads：表示InnoDB缓冲池无法满足的请求数。需要从磁盘中读取。
@@ -88,4 +96,8 @@
 	-- 在有的客户端中也会显示信息Lost connection to MySQL server during query
 	-- 客户端和服务端都有自己的max_allowed_packet变量，所以要调节此参数时，必须同时增加server端和client端的配置变量。
 	-- 增大此配置的值并不会有太多危险，因为额外的内存仅仅只在需要的时候被分配。我们可以增大此值以便于server端接收更大的SQL（比如，涉及BLOB列）
+
+-- wait_timeout
+-- interactive_timeout
+-- max_allowed_packet
 	
