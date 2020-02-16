@@ -96,8 +96,23 @@
 	-- 在有的客户端中也会显示信息Lost connection to MySQL server during query
 	-- 客户端和服务端都有自己的max_allowed_packet变量，所以要调节此参数时，必须同时增加server端和client端的配置变量。
 	-- 增大此配置的值并不会有太多危险，因为额外的内存仅仅只在需要的时候被分配。我们可以增大此值以便于server端接收更大的SQL（比如，涉及BLOB列）
-
+-- Mysql 5.7 数据库复制中的 binlog优化
+	-- https://www.cnblogs.com/nengka/p/mysqlbinlogoptimization.html
+	-- https://blog.csdn.net/damacheng/article/details/89847473
+-- Innodb中page clean线程
+	-- 什么是mysql日志系统之redo log和bin log？https://www.jianshu.com/p/4bcfffb27ed5
+	-- https://blog.csdn.net/n88Lpo/article/details/83629345
+-- Mysql IO
+	-- https://blog.csdn.net/jiao_fuyou/article/details/14229041
 -- wait_timeout
 -- interactive_timeout
 -- max_allowed_packet
+-- For DBA
+	-- http://www.fordba.com/mysql57replication-mode-change-online-enable-and-disable-gtids-html.html
+	
+	
+	
+	innodb_io_capacity 应该降低
+innodb_max_dirty_pages_pct 应该降低
+innodb_max_dirty_pages_pct_lwm 如果设置了应该考虑降低
 	
