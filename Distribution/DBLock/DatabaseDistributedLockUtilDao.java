@@ -8,13 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import zhaohe.study.dao.AbstractDao;
+import org.springframework.jdbc.core.JdbcTemplate;
 import zhaohe.study.dao.IDatabaseDistributedLockUtilDao;
 
 @Repository("databaseDistributedLockUtilDao")
-public class DatabaseDistributedLockUtilDao extends AbstractDao implements IDatabaseDistributedLockUtilDao {
+public class DatabaseDistributedLockUtilDao implements IDatabaseDistributedLockUtilDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseDistributedLockUtilDao.class);
-
+	@Autowired
+	JdbcTemplate jdbcTemplate;
 	@Override
 	public boolean lock(int time, TimeUnit unit, String lockType, String lockKey, String lockExpired, String lockOwner,
 			String description) {
@@ -63,7 +64,7 @@ public class DatabaseDistributedLockUtilDao extends AbstractDao implements IData
 		if ("oracle".equalsIgnoreCase("oracle")) {
 			try {
 				String insertSql = "insert into distributed_lock(oid,lock_type,lock_key,lock_expired,lock_owner,lock_time) values (?, ?, ?, ?, ?, ?)";
-				int affectRows = super.getJdbcTemplate().update(insertSql, oid, lockType, lockKey, lockExpired,
+				int affectRows = jdbcTemplate.update(insertSql, oid, lockType, lockKey, lockExpired,
 						lockOwner, getLockTime());
 				return affectRows > 0;
 			} catch (Exception e) {
@@ -77,7 +78,7 @@ public class DatabaseDistributedLockUtilDao extends AbstractDao implements IData
 		} else {
 			try {
 				String insertSql = "insert into distributed_lock(oid,lock_type,lock_key,lock_expired,lock_owner,lock_time,lock_description) values (?, ?, ?, ?, ?, ?, ?)";
-				int affectRows = super.getJdbcTemplate().update(insertSql, oid, lockType, lockKey, lockExpired,
+				int affectRows = jdbcTemplate.update(insertSql, oid, lockType, lockKey, lockExpired,
 						lockOwner, getLockTime(), description);
 				return affectRows > 0;
 			} catch (Exception e) {
@@ -95,7 +96,7 @@ public class DatabaseDistributedLockUtilDao extends AbstractDao implements IData
 	@Override
 	public boolean unlock(String lockType, String lockKey) {
 		String unLockSql = "delete from distributed_lock where lock_type = ? and lock_key = ?";
-		int affectRows = super.getJdbcTemplate().update(unLockSql, lockType, lockKey);
+		int affectRows = jdbcTemplate.update(unLockSql, lockType, lockKey);
 		return affectRows > 0;
 
 	}
@@ -103,7 +104,7 @@ public class DatabaseDistributedLockUtilDao extends AbstractDao implements IData
 	@Override
 	public boolean unlock(String lockType, String lockKey, String unlockOwner) {
 		String selectSql = "select lock_owner as \"lockOwner\" from distributed_lock where lock_type = ? and lock_key = ? group by lock_type,lock_key";
-		String lockOwner = super.getJdbcTemplate().queryForObject(selectSql, String.class, lockType, lockKey);
+		String lockOwner = jdbcTemplate.queryForObject(selectSql, String.class, lockType, lockKey);
 		if (lockOwner.equals(unlockOwner)) {
 			return unlock(lockType, lockKey);
 		} else {
