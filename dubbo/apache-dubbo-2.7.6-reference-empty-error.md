@@ -131,12 +131,12 @@
        }
    ```
 
-   所以，当使用后台硬编码调用dubbo服务时，会找不到服务(java.lang.IllegalStateException: Failed to check the status of the service)。解决办法：provider/consume添加group和version属性，统一为：
+   所以，当使用后台硬编码调用dubbo服务时，会找不到服务(java.lang.IllegalStateException: Failed to check the status of the service)。解决办法：provider添加group和version属性，统一为：
    
    providers:interface:version:group。
    
    <dubbo:provider   version="5.0" group="public" ... />
    
-   <dubbo:consumer  version="5.0" group="public" .../>
+   同样，配置reference的时候需要指定group和version。
    
    
