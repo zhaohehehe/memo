@@ -37,13 +37,13 @@ public abstract class MyAbstractThreadPoolExecutor extends ThreadPoolExecutor {
 	/**
 	 * @param corePoolSize    线程池核心池大小，包含没有使用的线程。如果运行的线程数小于corePoolSize,会添加一个新线程到线程池(
 	 *                        即使存在空闲线程)；
-	 * @param maximumPoolSize 线程池允许容纳的最大线程数量
+	 * @param maximumPoolSize 线程池允许容纳的最大线程数量（只有队列装不下的时候，才会使用到maximumPoolSize进行扩容）
 	 * @param keepAliveTime   当线程的数量大于核心线程数时，空闲线程如果等待keepAliveTime时间后，仍然没有接到新的任务，
 	 *                        就会执行reject策略。
 	 * @param unit
-	 * @param workQueue       ①如果运行的线程数大等于corePoolSize但是小于maximumPoolSize,会添加一个新线程到队列(步骤②);
-	 *                        ②如果队列未满,添加成功；如果队列已满,则创建新线程到线程池(步骤③)；
-	 *                        ③如果小于maximumPoolSize，创建新线程成功；如果大等于maximumPoolSize(启动reject处理策略
+	 * @param workQueue       ①如果到达一个新线程，如果当前运行的线程数大等于corePoolSize但是小于maximumPoolSize,会添加一个新线程到队列(->步骤②);
+	 *                        ②如果队列未满,添加成功；如果队列已满,则创建新线程到线程池(线程池数量不能超过maximumPoolSize)(->步骤③)；
+	 *                        ③如果线程池数量小于maximumPoolSize，创建新线程成功；如果大等于maximumPoolSize(启动reject处理策略
 	 *                        )。
 	 * @param threadFactory
 	 * @param handler
