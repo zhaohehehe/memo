@@ -43,7 +43,10 @@ p {
 </head>
 <body>
 	<div class="container">
-		<div><a href="https://dev.mysql.com/doc/refman/5.7/en/partitioning-range.html">参考mysql官方文档</a></div>
+		<div>
+			<a
+				href="https://dev.mysql.com/doc/refman/5.7/en/partitioning-range.html">参考mysql官方文档</a>
+		</div>
 		<div>
 			<h2>RANGE & LIST Partitioning</h2>
 			<ol>
@@ -65,8 +68,7 @@ PARTITION BY RANGE (store_id) (
 );								
 				</pre> <pre>(1)查询（等价于查询p2区间的记录的原生sql）：SELECT * FROM tr PARTITION (p2);</pre>
 					<pre>(2)删除分区（分区内的数据也会删除）：ALTER TABLE employees DROP PARTITION p2;</pre>
-					<pre>(3)删除所有数据保留表结构和分区：TRUNCATE TABLE employees;</pre> 
-					<pre>(4)查看分区定义：SHOW CREATE TABLE employees;</pre>
+					<pre>(3)删除所有数据保留表结构和分区：TRUNCATE TABLE employees;</pre> <pre>(4)查看分区定义：SHOW CREATE TABLE employees;</pre>
 					<pre>(5)添加分区：ALTER TABLE employees ADD PARTITION (PARTITION p4 VALUES LESS THAN (21));</pre>
 					<pre>(6)只能在high end添加分区，low end添加分区会失败，如下sql会失败：ALTER TABLE employees ADD PARTITION (PARTITION p VALUES LESS THAN (1));
 				如果出现这种情况，可以将p0拆分为2个分区，例如：
@@ -75,13 +77,12 @@ PARTITION BY RANGE (store_id) (
         				PARTITION n0 VALUES LESS THAN (1),
         				PARTITION n1 VALUES LESS THAN (6)
 					);
-				</pre>
-				<pre>(7)一次性添加多个分区：ALTER TABLE employees ADD PARTITION (
+				</pre> <pre>(7)一次性添加多个分区：ALTER TABLE employees ADD PARTITION (
     PARTITION p4 VALUES LESS THAN (21),
     PARTITION p4 VALUES LESS THAN (26)
-);</pre>		<pre>(8)合并分区：ALTER TABLE employees REORGANIZE PARTITION n0,n1 INTO (
+);</pre> <pre>(8)合并分区：ALTER TABLE employees REORGANIZE PARTITION n0,n1 INTO (
     PARTITION p0 VALUES LESS THAN (6),
-);</pre>		<pre>(4)不需要删除重建表的情况下变更分区类型：ALTER TABLE employees PARTITION BY HASH( store_id ) PARTITIONS 8;</pre>
+);</pre> <pre>(4)不需要删除重建表的情况下变更分区类型：ALTER TABLE employees PARTITION BY HASH( store_id ) PARTITIONS 8;</pre>
 				</li>
 				<li>不涉及主键，索引等的表分区操作：<pre>CREATE TABLE tt (
     id INT,
@@ -90,16 +91,15 @@ PARTITION BY RANGE (store_id) (
 PARTITION BY LIST(data) (
     PARTITION p0 VALUES IN (5, 10, 15),
     PARTITION p1 VALUES IN (6, 12, 18)
-);</pre>		<pre>(1)添加分区（不能添加已经重复的分区list值）：ALTER TABLE tt ADD PARTITION (PARTITION np VALUES IN (7, 4));</pre>
-				<pre>(2)合并分区：ALTER TABLE tt REORGANIZE PARTITION p0,np INTO (
+);</pre> <pre>(1)添加分区（不能添加已经重复的分区list值）：ALTER TABLE tt ADD PARTITION (PARTITION np VALUES IN (7, 4));</pre>
+					<pre>(2)合并分区：ALTER TABLE tt REORGANIZE PARTITION p0,np INTO (
     PARTITION p1 VALUES IN (6, 18),
     PARTITION np VALUES IN (4,7)
-);</pre>		<pre>(3)分区融合拆分：ALTER TABLE tt ADD PARTITION (PARTITION np VALUES IN (4, 8));
+);</pre> <pre>(3)分区融合拆分：ALTER TABLE tt ADD PARTITION (PARTITION np VALUES IN (4, 8));
 ALTER TABLE tt REORGANIZE PARTITION p1,np INTO (
     PARTITION p1 VALUES IN (6, 18),
     PARTITION np VALUES in (4, 8, 12)
-);</pre>		<pre>(4)插入数据必须在分区之内，一下sql报错：INSERT INTO tt VALUES (3, 5000);</pre>
-				<pre>(5)IGNORE关键字可以避免报错，重复或者不在分区内都会插入失败，只是不抛出异常：INSERT IGNORE INTO tt VALUES (3, 50);
+);</pre> <pre>(4)插入数据必须在分区之内，一下sql报错：INSERT INTO tt VALUES (3, 5000);</pre> <pre>(5)IGNORE关键字可以避免报错，重复或者不在分区内都会插入失败，只是不抛出异常：INSERT IGNORE INTO tt VALUES (3, 50);
 				</pre>
 				</li>
 			</ol>
@@ -112,7 +112,8 @@ ALTER TABLE tt REORGANIZE PARTITION p1,np INTO (
 					<li>字符串类型：char、varchar、binary、varbinary，不支持text和blob;</li>
 				</ol>
 			</div>
-			<strong>(2)RANGE COLUMNS partitioning:和Range分区类似，不同的是允许多列并且字段类型不仅仅是整型,而且不接受expressions，只接受columus</strong>
+			<strong>(2)RANGE COLUMNS
+				partitioning:和Range分区类似，不同的是允许多列并且字段类型不仅仅是整型,而且不接受expressions，只接受columus</strong>
 			<ol>
 				<li>COLUMNS分区比较的是行构造函数而不是标量值(可以理解为比较的是字符串的大小)，例如：<pre>SELECT (5,10) &lt; (5,12), (5,11) &lt; (5,12), (5,2,12) &lt; (4,8,12);-- 1,1,0，等价于SELECT ROW(5,10),ROW()构造函数</pre>
 					<pre>DROP table rc1;
@@ -134,14 +135,53 @@ p1		1
 p3		1</pre>
 				</li>
 			</ol>
-			<strong>(3)LIST COLUMNS partitioning:和LIST partitioning类似，只不过LIST partitioning只支持INT类型，而LIST COLUMNS partitioning支持string, DATE, and DATETIME</strong>
+			<strong>(3)LIST COLUMNS partitioning:和LIST
+				partitioning类似，只不过LIST partitioning只支持INT类型，而LIST COLUMNS
+				partitioning支持string, DATE, and DATETIME</strong>
+			<ol>
+				<li>MySQL主键的限制：分区字段必须在primar key或者unique key
+					中包括。例如，按照租户(string)分区： <pre>
+DROP TABLE IF EXISTS `test_graph`;
+CREATE TABLE `test_graph`  (
+  `OID` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分区内主键',
+  `GRAPH_VALUE` mediumtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '以json格式存储图',
+  `TENANT_ID` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '租户',
+  `DELETE_FLAG` tinyint(1) NOT NULL DEFAULT 0 COMMENT '逻辑删除标记（1被删除；0 未被删除），默认0',
+  `CREATE_TIME` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建时间，yyyy-MM-dd HH:mm:ss',
+  `NODE_NUMBER` smallint DEFAULT NULL COMMENT 'node数量',
+  PRIMARY KEY (`OID`,`TENANT_ID`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'test_graph' ROW_FORMAT = Dynamic
+PARTITION BY LIST COLUMNS(`TENANT_ID`)(
+	PARTITION p_test_tenant VALUES IN ('test_tenant')
+);
+
+DROP TABLE IF EXISTS `test_node`;
+CREATE TABLE `test_node`  (
+  `OID` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '分区内主键',
+  `GRAPH_ID` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '外键关联test_graph.OID',
+  `NODE_ID` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '外键关联NODE',
+  `TENANT_ID` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '租户',
+  `DELETE_FLAG` tinyint(1)  NOT NULL DEFAULT 0 COMMENT '逻辑删除标记（1被删除；0 未被删除），默认0',
+  `CREATE_TIME` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建时间，yyyy-MM-dd HH:mm:ss',
+  PRIMARY KEY (`OID`,`TENANT_ID`) USING BTREE,
+  UNIQUE INDEX `UNIQUE_RELATION`(`GRAPH_ID`, `NODE_ID`, `TENANT_ID`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'test_node' ROW_FORMAT = Dynamic
+PARTITION BY LIST COLUMNS(`TENANT_ID`)(
+	PARTITION p_test_tenant VALUES IN ('test_tenant')
+);
+					</pre>
+				</li>
+				<li>查询表分区:<pre>SELECT PARTITION_NAME,PARTITION_DESCRIPTION FROM INFORMATION_SCHEMA.PARTITIONS WHERE  TABLE_SCHEMA=SCHEMA() AND TABLE_NAME = 'test_node';</pre></li>
+				<li>添加表分区(会自动添加分区索引):<pre>ALTER TABLE test_node ADD PARTITION (PARTITION p_tenant1 VALUES IN ('tenant1'));</pre></li>
+				<li>删除表分区数据(不破坏分区结构):<pre>ALTER TABLE test_node TRUNCATE PARTITION p_test_tenant;</pre></li>
+				<li></li>
+			</ol>
 			<h2>HASH Partitioning</h2>
 			<div>
 				<ol>
-					<li><strong>PARTITION BY HASH( expr  ) PARTITIONS num</strong>:expr每次数据插入、更新或者删除之后都会重新评估，所以expr不能过于复杂，否则严重影响效率，特别是批处理的时候。</li>
+					<li><strong>PARTITION BY HASH( expr ) PARTITIONS num</strong>:expr每次数据插入、更新或者删除之后都会重新评估，所以expr不能过于复杂，否则严重影响效率，特别是批处理的时候。</li>
 					<li>expr有限制：参见https://dev.mysql.com/doc/refman/5.7/en/partitioning-limitations.html</li>
-					<li>普通HASH =MOD(expr,num),hash分区如果不指定num，默认为1
-					<pre>
+					<li>普通HASH =MOD(expr,num),hash分区如果不指定num，默认为1 <pre>
 CREATE TABLE employees (
     id INT NOT NULL,
     fname VARCHAR(30),
@@ -154,8 +194,7 @@ CREATE TABLE employees (
 PARTITION BY HASH( YEAR(hired) )
 PARTITIONS 4;</pre>
 					</li>
-					<li>linear HASH = 
-					<pre>
+					<li>linear HASH = <pre>
 CREATE TABLE employees (
     id INT NOT NULL,
     fname VARCHAR(30),
@@ -167,20 +206,19 @@ CREATE TABLE employees (
 )
 PARTITION BY LINEAR HASH( YEAR(hired) )
 PARTITIONS 4;</pre>
-					<div>LINEAR HASH 计算：
-						<ol>
-							<li>Find the next power of 2 greater than num. We call this value V; it can be calculated as:
-<pre>V = POWER(2, CEILING(LOG(2, num)))</pre>
-例如：num is 13,then LOG(2,13) is 3.7004397181411. CEILING(3.7004397181411) is 4, and V = POWER(2,4), which is 16
-							</li>
-							<li>
-<pre>Set N = F(column_list) & (V - 1).</pre></li>
-							<li>
-<pre>While N >= num: Set V = V / 2
-								Set N = N & (V - 1)</pre>
-							</li>
-						</ol>
-					</div>
+						<div>
+							LINEAR HASH 计算：
+							<ol>
+								<li>Find the next power of 2 greater than num. We call this
+									value V; it can be calculated as: <pre>V = POWER(2, CEILING(LOG(2, num)))</pre>
+									例如：num is 13,then LOG(2,13) is 3.7004397181411.
+									CEILING(3.7004397181411) is 4, and V = POWER(2,4), which is 16
+								</li>
+								<li><pre>Set N = F(column_list) & (V - 1).</pre></li>
+								<li><pre>While N >= num: Set V = V / 2
+								Set N = N & (V - 1)</pre></li>
+							</ol>
+						</div>
 					</li>
 				</ol>
 			</div>
@@ -188,8 +226,7 @@ PARTITIONS 4;</pre>
 			<div>
 				<ol>
 					<li>可以包含0列或者多列</li>
-					<li>作为分区的列必须包含所有主键或者主键的一部分，这里的主键包括UNIQUE、PRIMARY
-<pre>CREATE TABLE k1 (
+					<li>作为分区的列必须包含所有主键或者主键的一部分，这里的主键包括UNIQUE、PRIMARY <pre>CREATE TABLE k1 (
     id INT NOT NULL,
     name VARCHAR(20),
     UNIQUE KEY (id)
@@ -211,7 +248,7 @@ PARTITIONS 2;
 			<div>
 				<ol>
 					<li>子分区只能是HASH或者KEY分区，<strong><br>值的注意的是：<br>当使用KEY分区作为子分区的时候，必须明确指定列名，即使表有明确的主键<br>每个分区必须有同样数量的子分区，必须全部定义</strong>
-<pre>
+						<pre>
 CREATE TABLE ts (id INT, purchased DATE)
     PARTITION BY RANGE( YEAR(purchased) )
     SUBPARTITION BY HASH( TO_DAYS(purchased) )
@@ -219,9 +256,7 @@ CREATE TABLE ts (id INT, purchased DATE)
         PARTITION p0 VALUES LESS THAN (1990),
         PARTITION p1 VALUES LESS THAN (2000),
         PARTITION p2 VALUES LESS THAN MAXVALUE
-    );</pre>
-也可以使用以下冗长的方式明确定义子分区（本质是一样的）：
-<pre>
+    );</pre> 也可以使用以下冗长的方式明确定义子分区（本质是一样的）： <pre>
 CREATE TABLE ts (id INT, purchased DATE)
     PARTITION BY RANGE( YEAR(purchased) )
     SUBPARTITION BY HASH( TO_DAYS(purchased) ) (
@@ -239,8 +274,7 @@ CREATE TABLE ts (id INT, purchased DATE)
         )
     );</pre>
 					</li>
-					<li>创建指定路径存储的分区表：
-<pre>CREATE TABLE ts (id INT, purchased DATE)
+					<li>创建指定路径存储的分区表： <pre>CREATE TABLE ts (id INT, purchased DATE)
     ENGINE = MYISAM
     PARTITION BY RANGE( YEAR(purchased) )
     SUBPARTITION BY HASH( TO_DAYS(purchased) ) (
@@ -268,9 +302,7 @@ CREATE TABLE ts (id INT, purchased DATE)
                 DATA DIRECTORY = '/disk5/data'
                 INDEX DIRECTORY = '/disk5/idx'
         )
-    );</pre>
-或者
-<pre>CREATE TABLE ts (id INT, purchased DATE)
+    );</pre> 或者 <pre>CREATE TABLE ts (id INT, purchased DATE)
     ENGINE = MYISAM
     PARTITION BY RANGE(YEAR(purchased))
     SUBPARTITION BY HASH( TO_DAYS(purchased) ) (
@@ -298,7 +330,7 @@ CREATE TABLE ts (id INT, purchased DATE)
 					</li>
 				</ol>
 			</div>
-			
+
 			<ol>
 				<li><pre>......</pre></li>
 			</ol>

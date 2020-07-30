@@ -1,10 +1,13 @@
 -- user_tab_columns 
-SELECT column_name FROM user_tab_columns where table_name = upper('DATAMAP_OBJECT_RUN_STATUS') 
+SELECT column_name FROM user_tab_columns where table_name = upper('') 
  
 -- user_tab_cols 
-SELECT column_name FROM user_tab_cols where table_name = upper('DATAMAP_OBJECT_RUN_STATUS')
+SELECT column_name FROM user_tab_cols where table_name = upper('')
+
+-- all_tab_columns 
+select column_name,data_type From all_tab_columns where table_name=upper('') AND owner=upper('')
 
 -- 拼接字段
 select listagg(column_name, ',') WITHIN GROUP(ORDER BY column_name) 
 from user_tab_columns 
-where table_name = upper('DATAMAP_OBJECT_RUN_STATUS') 
+where table_name = upper('') 
