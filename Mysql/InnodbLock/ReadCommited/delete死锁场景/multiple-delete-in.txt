@@ -1,0 +1,105 @@
+CREATE TABLE `etl_workflow_stats` (
+  `ID` varchar(60) NOT NULL,
+  `WORKFLOWID` varchar(100) DEFAULT NULL,
+  `SCHEDULEID` varchar(200) DEFAULT NULL,
+  `TRIGGERNAME` varchar(100) DEFAULT NULL,
+  `EXCTIMES` int(11) DEFAULT NULL,
+  `TENANT_ID` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `SCHEDULE_UNIQUE` (`WORKFLOWID`,`SCHEDULEID`),
+  KEY `idx_wf_stats_scheduleid` (`SCHEDULEID`),
+  KEY `idx_wf_stats_tigname` (`TRIGGERNAME`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+INSERT INTO `etl_workflow_stats`(`ID`, `WORKFLOWID`, `SCHEDULEID`, `TRIGGERNAME`, `EXCTIMES`, `TENANT_ID`) VALUES ('00000', '00000', '00000', '00000', 29, NULL);
+INSERT INTO `etl_workflow_stats`(`ID`, `WORKFLOWID`, `SCHEDULEID`, `TRIGGERNAME`, `EXCTIMES`, `TENANT_ID`) VALUES ('11111', '11111', '11111', '11111', 29, NULL);
+INSERT INTO `etl_workflow_stats`(`ID`, `WORKFLOWID`, `SCHEDULEID`, `TRIGGERNAME`, `EXCTIMES`, `TENANT_ID`) VALUES ('22222', '22222', '22222', '22222', 29, NULL);
+INSERT INTO `etl_schedule`(`ID`, `EXPRESSION`, `DEALJOBNAME`, `STARTDATE`, `ENDDATE`, `DAYREPEATTIMES`, `REPEATTYPE`, `INTERVALSIZE`, `ENDTIMES`, `INTERVALINSECONDS`, `RUNOPTIONS`, `JOBTYPE`, `WORKFLOWINFO`, `ISVALID`, `ISLAUNCHED`, `TENANT_ID`) VALUES ('00000', NULL, '00000', '2019-07-12 11:42:20', '6666-06-06 06:06:06', 0, -1, 3600000, 0, 0, 1, 1, '00000', 1, 1, NULL);
+INSERT INTO `etl_schedule`(`ID`, `EXPRESSION`, `DEALJOBNAME`, `STARTDATE`, `ENDDATE`, `DAYREPEATTIMES`, `REPEATTYPE`, `INTERVALSIZE`, `ENDTIMES`, `INTERVALINSECONDS`, `RUNOPTIONS`, `JOBTYPE`, `WORKFLOWINFO`, `ISVALID`, `ISLAUNCHED`, `TENANT_ID`) VALUES ('11111', NULL, '11111', '2019-07-12 11:42:20', '6666-06-06 06:06:06', 0, -1, 3600000, 0, 0, 1, 1, '11111', 1, 1, NULL);
+INSERT INTO `etl_schedule`(`ID`, `EXPRESSION`, `DEALJOBNAME`, `STARTDATE`, `ENDDATE`, `DAYREPEATTIMES`, `REPEATTYPE`, `INTERVALSIZE`, `ENDTIMES`, `INTERVALINSECONDS`, `RUNOPTIONS`, `JOBTYPE`, `WORKFLOWINFO`, `ISVALID`, `ISLAUNCHED`, `TENANT_ID`) VALUES ('22222', NULL, '22222', '2019-07-12 11:42:20', '6666-06-06 06:06:06', 0, -1, 3600000, 0, 0, 1, 1, '22222', 1, 1, NULL);
+
+
+begin;
+-- 2.LOCK etl_workflow_stats S ,WAIT etl_workflow_stats X ,LOCK X etl_schedule
+delete from etl_schedule  where id in (select t.scheduleid from etl_workflow_stats t where t.triggername='00000');
+delete from etl_workflow_stats  where triggername='00000';
+commit;
+rollback;
+
+
+begin;
+-- 1. HOLD etl_workflow_stats X（22222，22222）
+delete from etl_workflow_stats  where scheduleid ='22222';
+-- 3.WAIT etl_schedule X
+delete from etl_schedule  where id='22222'; 
+commit;
+rollback;
+
+
+
+
+
+
+
+
+=====================================================
+
+CREATE TABLE `etl_workflow_stats_test` (
+  `ID` varchar(60) NOT NULL,
+  `WORKFLOWID` varchar(100) DEFAULT NULL,
+  `SCHEDULEID` varchar(200) DEFAULT NULL,
+  `TRIGGERNAME` varchar(100) DEFAULT NULL,
+  `EXCTIMES` int(11) DEFAULT NULL,
+  `TENANT_ID` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `SCHEDULE_UNIQUE` (`WORKFLOWID`,`SCHEDULEID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `dp42tbh`.`etl_workflow_stats_test`(`ID`, `WORKFLOWID`, `SCHEDULEID`, `TRIGGERNAME`, `EXCTIMES`, `TENANT_ID`) VALUES ('00000', '00000', '00000', '00000', 29, NULL);
+INSERT INTO `dp42tbh`.`etl_workflow_stats_test`(`ID`, `WORKFLOWID`, `SCHEDULEID`, `TRIGGERNAME`, `EXCTIMES`, `TENANT_ID`) VALUES ('11111', '11111', '11111', '11111', 29, NULL);
+INSERT INTO `dp42tbh`.`etl_workflow_stats_test`(`ID`, `WORKFLOWID`, `SCHEDULEID`, `TRIGGERNAME`, `EXCTIMES`, `TENANT_ID`) VALUES ('22222', '22222', '22222', '22222', 29, NULL);
+INSERT INTO `dp42tbh`.`etl_schedule`(`ID`, `EXPRESSION`, `DEALJOBNAME`, `STARTDATE`, `ENDDATE`, `DAYREPEATTIMES`, `REPEATTYPE`, `INTERVALSIZE`, `ENDTIMES`, `INTERVALINSECONDS`, `RUNOPTIONS`, `JOBTYPE`, `WORKFLOWINFO`, `ISVALID`, `ISLAUNCHED`, `TENANT_ID`) VALUES ('00000', NULL, '00000', '2019-07-12 11:42:20', '6666-06-06 06:06:06', 0, -1, 3600000, 0, 0, 1, 1, '00000', 1, 1, NULL);
+INSERT INTO `dp42tbh`.`etl_schedule`(`ID`, `EXPRESSION`, `DEALJOBNAME`, `STARTDATE`, `ENDDATE`, `DAYREPEATTIMES`, `REPEATTYPE`, `INTERVALSIZE`, `ENDTIMES`, `INTERVALINSECONDS`, `RUNOPTIONS`, `JOBTYPE`, `WORKFLOWINFO`, `ISVALID`, `ISLAUNCHED`, `TENANT_ID`) VALUES ('11111', NULL, '11111', '2019-07-12 11:42:20', '6666-06-06 06:06:06', 0, -1, 3600000, 0, 0, 1, 1, '11111', 1, 1, NULL);
+INSERT INTO `dp42tbh`.`etl_schedule`(`ID`, `EXPRESSION`, `DEALJOBNAME`, `STARTDATE`, `ENDDATE`, `DAYREPEATTIMES`, `REPEATTYPE`, `INTERVALSIZE`, `ENDTIMES`, `INTERVALINSECONDS`, `RUNOPTIONS`, `JOBTYPE`, `WORKFLOWINFO`, `ISVALID`, `ISLAUNCHED`, `TENANT_ID`) VALUES ('22222', NULL, '22222', '2019-07-12 11:42:20', '6666-06-06 06:06:06', 0, -1, 3600000, 0, 0, 1, 1, '22222', 1, 1, NULL);
+
+
+begin;
+
+delete from etl_schedule  where id in (select t.scheduleid from etl_workflow_stats_test t where t.triggername='00000');-- 1.LOCK etl_workflow_stats S ,LOCK etl_schedule X
+delete from etl_workflow_stats_test  where triggername='00000'; -- 3.WAIT etl_schedule X
+commit;
+rollback;
+
+
+
+begin;
+
+delete from etl_workflow_stats_test  where scheduleid ='22222';-- 2. LOCK etl_workflow_stats X（22222，22222）
+delete from etl_schedule  where id='22222';
+commit;
+rollback;
+---------------------------------------------
+begin;
+
+delete from etl_schedule  where id in (select t.scheduleid from etl_workflow_stats_test t where t.triggername='000002');-- 1.LOCK etl_workflow_stats S ,LOCK etl_schedule X
+delete from etl_workflow_stats_test  where triggername='000002'; -- 3.WAIT etl_schedule X
+commit;
+rollback;
+
+
+begin;
+
+delete from etl_schedule  where id in (select t.scheduleid from etl_workflow_stats_test t where t.triggername='22222');-- 2.LOCK etl_workflow_stats S ,LOCK etl_schedule X
+delete from etl_workflow_stats_test  where triggername='22222'; -- 3.WAIT etl_schedule X
+commit;
+rollback;
+
+
+
+
+
+
+
+
