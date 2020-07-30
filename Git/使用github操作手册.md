@@ -99,3 +99,14 @@
    注意：使用 git log 命令来查看git的提交历史。
 
  
+
+### 分支
+
+1.  查看分支：git branch -a
+2. 在当前分支创建新分支：git branch 分支名称
+3. 切换分支：git checkout 分支名称
+4. 在当前分支创建分支并切换（2+3）：git checkout -b 创建分支名称 
+5. push新分支：git push origin  分支名称
+6. 删除远程分支：git push origin --delete 分支名称
+7. 修改当前分支名称：git branch -m oldBranchName newBranchName
+8. 删除本地分支：git branch -d 分支名称
