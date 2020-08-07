@@ -110,3 +110,8 @@
 6. 删除远程分支：git push origin --delete 分支名称
 7. 修改当前分支名称：git branch -m oldBranchName newBranchName
 8. 删除本地分支：git branch -d 分支名称
+9.  查看分支关联信息：
+    1. git branch -vv
+    2. git remote show origin
+    3. cat .git/config
+10.  合并分支：git merge branchName (合并branchName 上的内容到本地)
