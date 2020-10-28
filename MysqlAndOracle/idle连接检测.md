@@ -1,6 +1,6 @@
 ## durid discard connection 原因
 
-1. sql运行导致锁表，引起服务异常。
+1. sql运行导致锁表或者死锁，引起服务异常。
 
 2. idle连接被数据库主动关闭，但是durid连接池不知道。
 
@@ -8,9 +8,15 @@
 
 3. [mysql btroubleshooting 3.13.9、3.13.10]: https://dev.mysql.com/doc/connectors/en/connector-j-usagenotes-troubleshooting.html
 
+# [alibaba](https://github.com/alibaba)/**druid** 建议配置
 
+[https://github.com/alibaba/druid/wiki/DruidDataSource%E9%85%8D%E7%BD%AE](https://github.com/alibaba/druid/wiki/DruidDataSource配置)
 
 ### **连接池是怎么判断一条连接是Idle状态的？**
+
+- **keepAlive**:	在Druid-1.0.27之前的版本，DruidDataSource建议使用TestWhileIdle来保证连接的有效性，但仍有很多场景需要对连接进行保活处理。在1.0.28版本之后，新加入keepAlive配置，缺省关闭。使用keepAlive功能，建议使用最新版本，比如1.1.21或者更高版本。
+
+  <https://github.com/alibaba/druid/wiki/KeepAlive_cn>
 
 -  **minEvictableIdleTimeMillis**：最小空闲时间，默认30分钟，如果连接池中空闲连接数大于minIdle，并且空闲时间(idleMillis)大于minEvictableIdleTimeMillis，则连接池会将该空闲连接设置成Idle状态并关闭；也就是说如果一条连接30分钟都没有使用到，并且这种空闲连接的数量超过了minIdle，则这些连接就会被关闭了。
 
