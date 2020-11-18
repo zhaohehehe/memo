@@ -1,0 +1,9 @@
+1.ps -ef | grep ${应用进程}
+
+2.jmap -dump:format=b,file=./logs/dump.out 539328
+
+3.下载dump文件并分析
+	1.jdk里自带的jvisualvm.exe工具。
+		（1）打开jvisualvm.exe，选择"工具"，安装Visual GC插件。
+		（2）选择"文件"，装入dump文件。
+		

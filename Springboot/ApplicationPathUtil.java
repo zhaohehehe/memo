@@ -2,6 +2,7 @@ package com.bonc.dataplatform.buw.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 
@@ -21,5 +22,10 @@ public class ApplicationPathUtil {
 		ApplicationHome home = new ApplicationHome(ApplicationPathUtil.class);
 		File jarFile = home.getSource().getParentFile();
 		return java.net.URLDecoder.decode(jarFile.getPath(), "UTF-8");
+	}
+	
+	public static InputStream loadClassPathResource(String path) throws IOException {
+		ClassPathResource resource = new ClassPathResource(path);
+		return resource.getInputStream();
 	}
 }
