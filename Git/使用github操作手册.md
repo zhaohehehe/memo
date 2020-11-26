@@ -92,26 +92,79 @@
 
    此命令用来清除 git  对于文件修改的缓存。相当于撤销 git add 命令所在的工作。**在使用本命令后，本地的修改并不会消失**，而是回到了如（一）所示的状态。继续用（一）中的操作，就可以放弃本地的修改。
 
-3. 已经用 git commit  提交了代码（未验证）
+### push之前回退commit
+	
+1. 查看commit历史：git log （git log --pretty=oneline）
 
-   可以使用 git reset --hard HEAD 来回退到上一次commit的状态。此命令可以用来回退到任意版本：git reset --hard  commitid 
+2. 回退到某次commit： git reset --hard  commitid 
 
-   注意：使用 git log 命令来查看git的提交历史。
+	注意:工作空间的代码的改动就没啦!!!!
+	
+	如果想保留工作空间的代码只是撤销commit,请执行下面的命令:git reset --soft HEAD^。HEAD^的意思是上一个版本，也可以写成HEAD~1、HEAD~2、...。
+	
+	--mixed
+		意思是：不删除工作空间改动代码，撤销commit，并且撤销git add . 操作。
+		这个为默认参数,git reset --mixed HEAD^ 和 git reset HEAD^ 效果是一样的。
+	--soft
+		不删除工作空间改动代码，撤销commit，不撤销git add . 操作。
+	--hard
+		删除工作空间改动代码，撤销commit，撤销git add . 操作。
+		注意完成这个操作后，就恢复到了上一次的commit状态。
+	-- 
+### push之后回退
 
+作者：鹅鹅鹅曲项向天歌呀
+链接：https://www.jianshu.com/p/491a14d414f6
+来源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
  
+
 
 ### 分支
 
 1.  查看分支：git branch -a
 2. 在当前分支创建新分支：git branch 分支名称
 3. 切换分支：git checkout 分支名称
-4. 在当前分支创建分支并切换（2+3）：git checkout -b 创建分支名称 
+4. 在当前分支创建分支并切换（2+3）：git checkout -b 创建分支名称
 5. push新分支：git push origin  分支名称
 6. 删除远程分支：git push origin --delete 分支名称
 7. 修改当前分支名称：git branch -m oldBranchName newBranchName
-8. 删除本地分支：git branch -d 分支名称
+8. 删除本地分支：git branch -D 分支名称
 9.  查看分支关联信息：
-    1. git branch -vv
-    2. git remote show origin
-    3. cat .git/config
+  1. git branch -vv
+  新建本地MASTER-SNAPSHOT-DEMO之后，执行`git pull/push`异常如下：
+```
+$ git pull
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
+  git pull <remote> <branch>
+If you wish to set tracking information for this branch you can do so with:
+  git branch --set-upstream-to=origin/<branch> MASTER-SNAPSHOT-DEMO
+```
+是因为本地branch和远程branch没有关联，可以使用`git branch -vv`查看关联关系，然后根据提示执行：
+`git branch --set-upstream-to=origin/<branch> MASTER-SNAPSHOT-DEMO`即可。执行之后，可以`git remote show origin`查看。
+  2. git remote show origin
+  3. cat .git/config
 10.  合并分支：git merge branchName (合并branchName 上的内容到本地)
+
+11. 添加注释：git config branch.<branch>.description '注释内容'
+12. 查看注释：git config branch.<branch>.description
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
