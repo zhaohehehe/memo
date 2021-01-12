@@ -17,7 +17,8 @@
 <body>
 	<div class="container-fluid">
 		<div class="alert alert-success" role="alert">
-			<a href="https://blog.csdn.net/mmlz00/article/details/83832977">参考blog</a>
+			<a href="https://blog.csdn.net/mmlz00/article/details/83832977">参考blog1</a>
+			<a href="https://www.cnblogs.com/thisiswhy/p/13839741.html">参考blog2</a>
 			<h4 class="alert-heading">java.util.concurrent.ThreadPoolExecutor源码解读（CTL）</h4>
 			<pre>
 		
@@ -162,6 +163,55 @@
         }
         return workerStarted;
     }			
+			</pre>
+		</div>
+		<div class="alert alert-success" role="alert">
+			<h4 class="alert-heading"><a href="https://blog.csdn.net/u013256816/article/details/109213183">线程池中的线程是如何回收的?</a></h4>
+			<strong>线程池中的线程是可以重用的，不用频繁的创建和销毁</strong>
+			<pre>
+<code>public class MyThreadPoolExecutor {
+	public static void main(String[] args) {
+		BlockingQueue&lt;Runnable> workQueue = new ArrayBlockingQueue<>(16);
+		ThreadPoolExecutor pool = new ThreadPoolExecutor(4, 4, 0, TimeUnit.MICROSECONDS, workQueue);
+		for (int i = 0; i < 16; i++) {
+			pool.submit(new Runnable() {
+
+				@Override
+				public void run() {
+					Thread t = Thread.currentThread();
+					System.out.println(t.hashCode() + " start " + t.toString() + " " + this.hashCode());
+
+				}
+			});
+		}
+
+	}
+
+}</code>
+<hr>
+<em>1213795377 start Thread[pool-1-thread-4,5,main] 1184824138
+1790280841 start Thread[pool-1-thread-1,5,main] 1685219247
+716841426 start Thread[pool-1-thread-2,5,main] 612227829
+716841426 start Thread[pool-1-thread-2,5,main] 541215394
+716841426 start Thread[pool-1-thread-2,5,main] 1698746574
+1265014699 start Thread[pool-1-thread-3,5,main] 1168203959
+716841426 start Thread[pool-1-thread-2,5,main] 504350981
+1790280841 start Thread[pool-1-thread-1,5,main] 1615720441
+1213795377 start Thread[pool-1-thread-4,5,main] 1117873985
+1213795377 start Thread[pool-1-thread-4,5,main] 128184689
+1790280841 start Thread[pool-1-thread-1,5,main] 625962388
+716841426 start Thread[pool-1-thread-2,5,main] 1424953923
+1790280841 start Thread[pool-1-thread-1,5,main] 1670919288
+1265014699 start Thread[pool-1-thread-3,5,main] 1100938459
+716841426 start Thread[pool-1-thread-2,5,main] 1716147494
+1213795377 start Thread[pool-1-thread-4,5,main] 119233840
+</em>
+<hr>
+<strong>
+<p>Thread[pool-1-thread-*,5,main]:*的编号是可重复的，Thread的内存地址也是可重复的，证明线程可以复用。由此引出如果使用线程池并且线程内部使用了ThreadLocal变量，那么线程结束后还需要考虑ThreadLocal的清理。在一些RPC或者Web框架中，很可能因为没有清理而污染线程的上下文。</p>
+<p>例如：Dubbo的InternalThreadLocal.removeAll()方法。<a href="https://www.cnblogs.com/thisiswhy/p/13839741.html">https://www.cnblogs.com/thisiswhy/p/13839741.html</a></p>
+</strong>
+
 			</pre>
 		</div>
 		<div class="alert alert-success" role="alert">
