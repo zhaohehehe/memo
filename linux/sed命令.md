@@ -4,19 +4,14 @@
 
   **nl命令在linux系统中用来计算显示文件中行号**
 
-  sed ‘10a\1111111111111111’ testfile（第10行后添加一行到testfile）
+  sed '10a\1111111111111111' testfile（第10行后添加一行到testfile）
 
-   nl testfile | sed '2a newcontext' （第2行后，即第3行添加）
+  nl testfile | sed '2a newcontext' （第2行后，即第3行添加）
 
-   nl testfile | sed '2i newcontext'（第2行前，即第2行添加）
+  nl testfile | sed '2i newcontext'（第2行前，即第2行添加）
 
-  
-
-   nl testfile | sed '2i newline1\
-
-  < newline2'（追加多行以\进行追加新行）
-
-  
+  nl testfile | sed '2i newline1\nnewline2'（追加多行以\n进行追加新行）
+  nl testfile | sed '/world/a\taobao\njingdong\naliyun' lb.txt（world行下插入多行）
 
   nl testfile | sed '2,5d'（删除第 2~5 行）
 
@@ -28,6 +23,7 @@
 
    1. nl testfile  | sed '2,5c hello'（2到5行的全部内容替换为hello）
    2. nl testfile  | sed -n '2,5p'（只显示2到5行）
+   3. sed -n '5,10p' testfile （只显示2到5行）
 
 3. 数据的搜寻并显示
 

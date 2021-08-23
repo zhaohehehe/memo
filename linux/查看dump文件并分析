@@ -1,6 +1,6 @@
 1.ps -ef | grep ${应用进程}
 
-2.jmap -dump:format=b,file=./logs/dump.out 539328
+2.jmap -dump:format=b,file=./logs/dump.hprof 539328
 
 3.下载dump文件并分析
 	1.jdk里自带的jvisualvm.exe工具。
