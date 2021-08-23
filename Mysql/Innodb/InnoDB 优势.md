@@ -1,0 +1,20 @@
+### 15.1.1 Benefits of Using InnoDB Tables
+
+You may find `InnoDB` tables beneficial for the following reasons:
+
+-  `InnoDB` [crash recovery](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_crash_recovery) （崩溃恢复）automatically finalizes any changes that were committed before the time of the crash, and undoes any changes that were in process but not committed. InnoDB崩溃恢复会自动完成崩溃之前提交的所有更改，并撤消正在进行但未提交的所有更改.
+- The `InnoDB` storage engine maintains its own [buffer pool](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_buffer_pool) （缓冲池）。常用数据直接从内存中读取，速度更快。专用数据库服务器通常会分配高达80%的物理内存给 buffer pool.
+- 支持  [foreign keys](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_foreign_key) ，强制执行 [referential integrity](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_referential_integrity).（参照完整性），有效剔除脏数据.
+- 当 a page in a tablespace从磁盘或者内存加载到buffer pool中时，校验是否是损坏数据。
+- 设置 [primary key](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_primary_key) columns for each table, 涉及这些列的操作会自动优化。It is very fast to reference the primary key columns in [`WHERE`](https://dev.mysql.com/doc/refman/8.0/en/select.html) clauses, [`ORDER BY`](https://dev.mysql.com/doc/refman/8.0/en/select.html) clauses, [`GROUP BY`](https://dev.mysql.com/doc/refman/8.0/en/select.html) clauses, and [join](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_join) operations.
+-  [change buffering](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_change_buffering).  包含 **insert buffering**, **delete buffering**, and **purge buffering**。`InnoDB` 不仅允许并发读写，而且当索引发生变化时可以缓存变更索引（索引变更通常会引发较大的IO操作）。这些索引可以被后台线程延迟并定期以流的形式加载到磁盘，不需要马上加载变更数据到磁盘。
+- [Adaptive Hash Index](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_adaptive_hash_index) （自适应散列索引）对InnoDB表的优化，通过在内存中构造散列索引，可以使用=和in运算符加速查找.
+- You can compress tables and associated indexes.
+- You can create and drop indexes with much less impact on performance and availability.
+- Truncating a [file-per-table](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_file_per_table) tablespace is very fast, and can free up disk space for the operating system to reuse, rather than freeing up space within the [system tablespace](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_system_tablespace) that only `InnoDB` can reuse.
+- The storage layout for table data is more efficient for [`BLOB`](https://dev.mysql.com/doc/refman/8.0/en/blob.html) and long text fields, with the [DYNAMIC](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_dynamic_row_format) row format.
+- You can monitor the internal workings of the storage engine by querying [INFORMATION_SCHEMA](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_information_schema) tables.（INFORMATION_SCHEMA 表监视存储引擎的内部工作，The name of the **database** that provides a query interface to the MySQL **data dictionary**. (This name is defined by the ANSI SQL standard.) To examine information (metadata) about the database, you can query tables such as `INFORMATION_SCHEMA.TABLES` and `INFORMATION_SCHEMA.COLUMNS`, rather than using `SHOW` commands that produce unstructured output.
+- You can monitor the performance details of the storage engine by querying [Performance Schema](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_performance_schema) tables.（get detailed information about the performance characteristics of many internal parts of the MySQL server）
+- You can freely mix `InnoDB` tables with tables from other MySQL storage engines, even within the same statement. For example, you can use a [join](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_join) operation to combine data from `InnoDB` and [`MEMORY`](https://dev.mysql.com/doc/refman/8.0/en/memory-storage-engine.html) tables in a single query.
+- `InnoDB` has been designed for CPU efficiency and maximum performance when processing large data volumes.
+- `InnoDB` tables can handle large quantities of data, even on operating systems where file size is limited to 2GB.
