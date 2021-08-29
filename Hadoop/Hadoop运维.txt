@@ -1,2 +1,0 @@
-1.Hadoop性能监控指标
-	https://www.site24x7.com/zhcn/plugins/hadoop-monitoring.html
